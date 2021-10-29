@@ -86,8 +86,7 @@ export function useBlock() {
       const fixedBlock = findBlockByType(child.type);
       if (!fixedBlock.validParentType.includes(parent.type)) {
         message.warning(
-          `${block.type} cannot be used inside ${
-            parentBlock.type
+          `${block.type} cannot be used inside ${parentBlock.type
           }, only inside: ${block.validParentType.join(', ')}`
         );
         return;
@@ -96,69 +95,6 @@ export function useBlock() {
       parent.children.splice(positionIndex, 0, child);
       change(parentIdx, { ...parent }); // listeners not notified
       setFocusIdx(nextFocusIdx);
-      scrollFocusBlockIntoView({
-        idx: nextFocusIdx,
-        inShadowDom: true,
-      });
-    },
-    [autoComplete, change, focusIdx, getState, setFocusIdx]
-  );
-
-  const moveBlock = useCallback(
-    (params: { sourceIdx: string; destinationIdx: string }) => {
-      let { sourceIdx, destinationIdx } = params;
-      if (sourceIdx === destinationIdx) return null;
-
-      let nextFocusIdx = focusIdx;
-
-      const values = cloneDeep(getState().values) as IEmailTemplate;
-      const source = getValueByIdx(values, sourceIdx)!;
-      const sourceParentIdx = getParentIdx(sourceIdx);
-      const destinationParentIdx = getParentIdx(destinationIdx);
-      if (!sourceParentIdx || !destinationParentIdx) return;
-      const sourceParent = getValueByIdx(values, sourceParentIdx)!;
-      const destinationParent = getValueByIdx(values, destinationParentIdx)!;
-
-      const sourceBlock = findBlockByType(source.type);
-      const sourceIndex = getIndexByIdx(sourceIdx);
-      let [removed] = sourceParent.children.splice(sourceIndex, 1);
-      if (autoComplete) {
-        const autoCompletePaths = BlocksMap.getAutoCompletePath(
-          source.type,
-          destinationParent.type
-        );
-        if (autoCompletePaths) {
-          autoCompletePaths.forEach((item) => {
-            removed = createBlockItem(item, {
-              children: [removed],
-            });
-            nextFocusIdx += '.children.[0]';
-          });
-        } else {
-          message.warning('Something when wrong');
-        }
-      }
-
-      const positionIndex = getIndexByIdx(destinationIdx);
-      if (sourceParent === destinationParent) {
-        destinationParent.children.splice(positionIndex, 0, removed);
-
-        nextFocusIdx =
-          destinationParentIdx +
-          `.children.[${destinationParent.children.findIndex(
-            (item) => item === removed
-          )}]`;
-      } else {
-        destinationParent.children.splice(positionIndex, 0, removed);
-        nextFocusIdx = destinationIdx;
-      }
-
-      change(getPageIdx(), { ...values.content });
-
-      setTimeout(() => {
-        setFocusIdx(nextFocusIdx);
-      }, 50);
-
       scrollFocusBlockIntoView({
         idx: nextFocusIdx,
         inShadowDom: true,
@@ -235,43 +171,65 @@ export function useBlock() {
     [change]
   );
 
-  const moveByIdx = useCallback(
+  const moveBlock = useCallback(
     (sourceIdx: string, destinationIdx: string) => {
-      let nextFocusIdx = focusIdx;
-      const values = cloneDeep(getState().values) as IEmailTemplate;
-      const sourceIndex = getIndexByIdx(sourceIdx);
-      const destinationIndex = getIndexByIdx(destinationIdx);
+      if (sourceIdx === destinationIdx) return null;
 
+      let nextFocusIdx = focusIdx;
+
+      const values = cloneDeep(getState().values) as IEmailTemplate;
+      const source = getValueByIdx(values, sourceIdx)!;
       const sourceParentIdx = getParentIdx(sourceIdx);
       const destinationParentIdx = getParentIdx(destinationIdx);
+      if (!sourceParentIdx || !destinationParentIdx) return;
+      const sourceParent = getValueByIdx(values, sourceParentIdx)!;
+      const destinationParent = getValueByIdx(values, destinationParentIdx)!;
 
-      if (!sourceParentIdx || !destinationParentIdx) {
-        message.warning('Something error');
-        return;
-      }
-
-      const sourceParent = get(values, sourceParentIdx) as IBlockData;
-
-      const destinationParent = get(values, sourceParentIdx) as IBlockData;
-
-      if (destinationIndex >= destinationParent.children.length) {
-        return;
-      }
-
-      const [removed] = sourceParent.children.splice(Number(sourceIndex), 1);
-      destinationParent.children.splice(Number(destinationIndex), 0, removed);
-
-      batch(() => {
-        change(sourceParentIdx, { ...sourceParent });
-        if (sourceParentIdx !== destinationParentIdx) {
-          change(destinationParentIdx, { ...destinationParent });
+      const sourceIndex = getIndexByIdx(sourceIdx);
+      let [removed] = sourceParent.children.splice(sourceIndex, 1);
+      if (autoComplete) {
+        const autoCompletePaths = BlocksMap.getAutoCompletePath(
+          source.type,
+          destinationParent.type
+        );
+        if (autoCompletePaths) {
+          autoCompletePaths.forEach((item) => {
+            removed = createBlockItem(item, {
+              children: [removed],
+            });
+            nextFocusIdx += '.children.[0]';
+          });
+        } else {
+          message.warning('Something when wrong');
         }
-      });
+      }
 
-      nextFocusIdx = destinationIdx;
-      setFocusIdx(nextFocusIdx);
+      const positionIndex = getIndexByIdx(destinationIdx);
+      if (sourceParent === destinationParent) {
+        destinationParent.children.splice(positionIndex, 0, removed);
+
+        nextFocusIdx =
+          destinationParentIdx +
+          `.children.[${destinationParent.children.findIndex(
+            (item) => item === removed
+          )}]`;
+      } else {
+        destinationParent.children.splice(positionIndex, 0, removed);
+        nextFocusIdx = destinationIdx;
+      }
+
+      change(getPageIdx(), { ...values.content });
+
+      setTimeout(() => {
+        setFocusIdx(nextFocusIdx);
+      }, 50);
+
+      scrollFocusBlockIntoView({
+        idx: nextFocusIdx,
+        inShadowDom: true,
+      });
     },
-    [batch, change, focusIdx, getState, setFocusIdx]
+    [autoComplete, change, focusIdx, getState, setFocusIdx]
   );
 
   const isExistBlock = useCallback(
@@ -310,7 +268,6 @@ export function useBlock() {
     moveBlock,
     copyBlock,
     removeBlock,
-    moveByIdx,
     isExistBlock,
     redo,
     undo,

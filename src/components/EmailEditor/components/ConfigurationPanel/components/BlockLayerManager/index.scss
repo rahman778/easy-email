@@ -1,0 +1,46 @@
+
+#BlockLayerManager {
+  margin-top: 10px;
+  .ant-tree-treenode {
+    padding: 5px 0px !important;
+    margin: 0px 10px;
+    position: relative;
+  }
+
+  .ant-tree-treenode.ant-tree-treenode-selected {
+    position: relative;
+    background-color: #eaf3ff !important;
+  }
+  .ant-tree-treenode.ant-tree-treenode-selected::before {
+    content: "";
+    background-color: rgba(44, 110, 203, 1);
+    position: absolute;
+    top: 0;
+    left: -8px;
+    height: 100%;
+    display: block;
+    width: 3px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+  }
+
+  .ant-tree .ant-tree-node-content-wrapper {
+    background-color: transparent !important;
+  }
+
+
+  .ant-tree-treenode:not(.ant-tree-treenode-selected) {
+    &:hover {
+      background-color: #f5f5f5;
+    }
+
+  }
+  .ant-tree-treenode .ant-tree-indent-unit {
+    width: 12px;
+  }
+
+  .ant-tree-draggable-icon {
+    display: none;
+  }
+
+}

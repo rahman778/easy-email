@@ -48,8 +48,8 @@ const basicBlocks = {
 
 export class BlocksMap {
   static basicBlocksMap = basicBlocks;
-  static externalBlocksMap: { [key: string]: IBlock } = {};
-  private static autoCompletePath: { [key: string]: Array<BlockType[]> } = {};
+  static externalBlocksMap: { [key: string]: IBlock; } = {};
+  private static autoCompletePath: { [key: string]: Array<BlockType[]>; } = {};
 
   static getBlocks() {
     return [
@@ -58,12 +58,12 @@ export class BlocksMap {
     ];
   }
 
-  static registerBlocks(blocksMap: { [key: string]: IBlock }) {
+  static registerBlocks(blocksMap: { [key: string]: IBlock; }) {
     Object.assign(this.externalBlocksMap, blocksMap);
     this.autoCompletePath = this.setAutoCompletePath();
   }
 
-  static findBlockByType(type: string): IBlock {
+  static findBlockByType(type: string | null): IBlock | null {
     return this.getBlocks().find((child) => {
       return child?.type === type;
     }) as any;
@@ -82,7 +82,7 @@ export class BlocksMap {
   }
 
   static getBlock<
-    E extends { [key: string]: IBlock },
+    E extends { [key: string]: IBlock; },
     B extends typeof BlocksMap.basicBlocksMap,
     A extends B & E,
     T extends keyof A
@@ -92,7 +92,7 @@ export class BlocksMap {
   }
 
   static setAutoCompletePath() {
-    const paths: { [key: string]: Array<BlockType[]> } = {};
+    const paths: { [key: string]: Array<BlockType[]>; } = {};
 
     const renderFullPath = (
       type: BlockType,

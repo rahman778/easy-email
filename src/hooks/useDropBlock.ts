@@ -16,7 +16,7 @@ import { getEditNode } from '@/utils/getEditNode';
 
 export function useDropBlock() {
   const [ref, setRef] = useState<HTMLElement | null>(null);
-  const { values, addBlock, moveBlock, focusBlock } = useBlock();
+  const { values, focusBlock } = useBlock();
   const { autoComplete } = useContext(EditorPropsContext);
   const { dataTransfer, setDataTransfer } = useDataTransfer();
   const cacheValues = useRef(values);

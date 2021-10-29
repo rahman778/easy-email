@@ -27,7 +27,7 @@ export function ContextMenu({ ele, idx }: { ele: HTMLElement; idx: string; }) {
   const [modalVisible, setModalVisible] = useState(false);
   const { onAddCollection } = useContext(EditorPropsContext);
   const {
-    moveByIdx,
+    moveBlock,
     copyBlock,
     removeBlock,
     focusBlock: focusBlockData,
@@ -68,7 +68,7 @@ export function ContextMenu({ ele, idx }: { ele: HTMLElement; idx: string; }) {
   };
 
   const handleMoveUp = () => {
-    moveByIdx(idx, getSiblingIdx(idx, -1));
+    moveBlock(idx, getSiblingIdx(idx, -1));
     scrollFocusBlockIntoView({
       idx: getSiblingIdx(idx, -1),
       inShadowDom: true,
@@ -77,7 +77,7 @@ export function ContextMenu({ ele, idx }: { ele: HTMLElement; idx: string; }) {
   };
 
   const handleMoveDown = () => {
-    moveByIdx(idx, getSiblingIdx(idx, 1));
+    moveBlock(idx, getSiblingIdx(idx, 1));
     scrollFocusBlockIntoView({
       idx: getSiblingIdx(idx, 1),
       inShadowDom: true,
