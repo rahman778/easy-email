@@ -48,64 +48,69 @@ export function BlockTreeItem<T extends TreeNode<T>>(props: BlockTreeItemProps<T
   }, [onDragStart]);
 
   return (
-    <li className={styles.treeNodeWrapper}>
-      <ReactSortable
-        revertOnSpill
-        list={[{ id: nodeData.id }]}
-        setList={() => { }}
-        onMove={onDragMove}
-        onEnd={onDragEnd}
-        onStart={onStart}
-        onSpill={onSpill}
-        {...{
-          animation: 150,
-          fallbackOnBody: true,
-          swapThreshold: 0.65,
-          ghostClass: 'ghost',
-          group: 'shared',
-        }}
-      >
-        <div
-          className={classnames(styles.treeNode)}
-          {
-          ...{
-            [DATA_ATTRIBUTE_ID]: nodeData.id,
-            [DATA_ATTRIBUTE_INDEX]: index,
-          }
-          }
 
-        >
+    <ReactSortable
+      className={styles.treeNodeWrapper}
+      tag="li"
+      revertOnSpill
+      list={[{ id: nodeData.id }]}
+      setList={() => { }}
+      onMove={onDragMove}
+      onEnd={onDragEnd}
+      onStart={onStart}
+      onSpill={onSpill}
+      {...{
+        animation: 150,
+        fallbackOnBody: true,
+        swapThreshold: 0.65,
+        ghostClass: styles.ghost,
+        group: 'shared',
+      }}
+    >
+      <div  {
+        ...{
+          [DATA_ATTRIBUTE_ID]: nodeData.id,
+          [DATA_ATTRIBUTE_INDEX]: index,
+        }
+      }
+      >
+        <div className={classnames(styles.treeNode)}>
           <div style={{ width: indent * 18 }} />
           <TreeCollapse expand={expand} setExpand={setExpand} />
-          <div className={styles.treeNodeTitle}>{renderTitle(nodeData)}</div>
-          <IconFont
-            iconName="icon-drag"
-            style={{ cursor: 'grab', fontSize: 12 }}
-          />
-        </div>
-      </ReactSortable>
 
-      <ul
-        style={{ maxHeight: expand ? undefined : 0, overflow: 'hidden' }}
-        className={styles.treeNodeList}
-      >
-        {nodeData.children?.map((item, index) => {
-          return (
-            <BlockTreeItem<T>
-              key={index}
-              index={index}
-              nodeData={item}
-              renderTitle={renderTitle}
-              indent={indent + 1}
-              defaultExpandAll={defaultExpandAll}
-              onDragStart={onDragStart}
-              onDragMove={onDragMove}
-              onDragEnd={onDragEnd}
-              onSpill={onSpill}
+          <div className={styles.treeNodeContent}>
+            <div className={styles.treeNodeTitle}>{renderTitle(nodeData)}</div>
+            <IconFont
+              iconName="icon-drag"
+              style={{ cursor: 'grab', fontSize: 12 }}
             />
-          );
-        })}
-      </ul>
-    </li>
+            <div className={styles.treeDropIndicator} />
+          </div>
+
+        </div>
+        <ul
+          style={{ maxHeight: expand ? undefined : 0, overflow: 'hidden' }}
+          className={styles.treeNodeList}
+        >
+          {nodeData.children?.map((item, index) => {
+            return (
+              <BlockTreeItem<T>
+                key={index}
+                index={index}
+                nodeData={item}
+                renderTitle={renderTitle}
+                indent={indent + 1}
+                defaultExpandAll={defaultExpandAll}
+                onDragStart={onDragStart}
+                onDragMove={onDragMove}
+                onDragEnd={onDragEnd}
+                onSpill={onSpill}
+              />
+            );
+          })}
+        </ul>
+        <div style={{ width: `calc(100% - ${indent * 18}px - 25px)` }} className={styles.treeDropEndIndicator} />
+      </div>
+    </ReactSortable>
   );
 }

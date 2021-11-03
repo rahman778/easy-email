@@ -46,6 +46,7 @@ export function BlockLayerManager() {
 
   const allowDrop: BlockTreeProps<IBlockDataWithId>['allowDrop'] = useCallback(
     (params) => {
+      return true;
       const {
         dragNode,
         dropNode,

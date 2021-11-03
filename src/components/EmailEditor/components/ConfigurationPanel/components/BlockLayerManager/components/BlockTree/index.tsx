@@ -34,7 +34,7 @@ const getCurrenTreeNode = (
   ele: HTMLElement,
   rootEle?: HTMLElement
 ): HTMLElement | null => {
-  if (ele.classList.contains(styles.treeNode)) return ele;
+  if (ele.getAttribute(DATA_ATTRIBUTE_ID)) return ele;
   if (ele.parentElement && rootEle && rootEle.contains(ele.parentElement))
     return getCurrenTreeNode(ele.parentElement, rootEle);
   return null;
@@ -113,7 +113,7 @@ export function BlockTree<T extends TreeNode<T>>(props: BlockTreeProps<T>) {
 
   const onDragStart: ReactSortableProps<T>['onStart'] = useCallback(
     (evt, sortable, store) => {
-
+      console.log('onDragStart');
     },
     []
   );
@@ -130,6 +130,11 @@ export function BlockTree<T extends TreeNode<T>>(props: BlockTreeProps<T>) {
 
       const dragEle = getCurrenTreeNode(evt.dragged);
       const dropEle = getCurrenTreeNode(evt.related);
+
+      [...eleRef!.querySelectorAll(`.${styles.treeNodeDrop},.${styles.treeNodeDropEnd}`)].forEach(item => {
+        item.classList.remove(styles.treeNodeDrop, styles.treeNodeDropEnd);
+      });
+
       if (dropEle && dragEle) {
         const dragId = dragEle.getAttribute(DATA_ATTRIBUTE_ID)!;
         const dragIndex = dragEle.getAttribute(DATA_ATTRIBUTE_INDEX)!;
@@ -153,7 +158,7 @@ export function BlockTree<T extends TreeNode<T>>(props: BlockTreeProps<T>) {
       }
       return false;
     },
-    [allowDrop, treeDataMap]
+    [allowDrop, eleRef, treeDataMap]
   );
 
   const onDragEnd: ReactSortableProps<T>['onEnd'] = useCallback(
@@ -164,7 +169,9 @@ export function BlockTree<T extends TreeNode<T>>(props: BlockTreeProps<T>) {
       newIndex: number;
       oldIndex: number;
     }) => {
-
+      [...eleRef!.querySelectorAll(`.${styles.treeNodeDrop},.${styles.treeNodeDropEnd}`)].forEach(item => {
+        item.classList.remove(styles.treeNodeDrop, styles.treeNodeDropEnd);
+      });
       if (dropData) {
         onDrop(dropData);
       }
