@@ -13,3 +13,4 @@ export { WrapperBlockItem } from './WrapperBlockItem';
 export { SectionBlockItem } from './SectionBlockItem';
 export { GroupBlockItem } from './GroupBlockItem';
 export { ColumnBlockItem } from './ColumnBlockItem';
+export { TableBlockItem } from './TableBlockItem';

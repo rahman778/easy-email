@@ -225,7 +225,7 @@ const SubIcon: React.FC<{
 
   if (
     noChild ||
-    BlocksMap.findBlockByType(blockType).validParentType.includes(
+    BlocksMap.findBlockByType(blockType)?.validParentType.includes(
       BasicType.COLUMN
     )
   )

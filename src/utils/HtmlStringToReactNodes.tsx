@@ -76,6 +76,7 @@ const RenderReactNode = React.memo(function ({
       return createElement(tagName, {
         key: index,
         ...attributes,
+        // @ts-ignore
         dangerouslySetInnerHTML: { __html: node.textContent },
       });
     }
@@ -111,6 +112,7 @@ const RenderReactNode = React.memo(function ({
         key: index,
         ...attributes,
         style: getStyle(node.getAttribute('style')),
+        // @ts-ignore
         dangerouslySetInnerHTML: { __html: node.innerHTML },
       });
     }

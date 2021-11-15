@@ -35,10 +35,10 @@ export function ToolsBar({ block }: { block: IBlock; }) {
   const { focusIdx, setFocusIdx } = useFocusIdx();
   const isPage = block.type === BasicType.PAGE;
 
-  const isVerticalBlock = columnBlock.validParentType.some((item) =>
+  const isVerticalBlock = columnBlock?.validParentType.some((item) =>
     block.validParentType.some((p) => p === item)
   );
-  const isHorizontalBlock = sectionBlock.validParentType.some((item) =>
+  const isHorizontalBlock = sectionBlock?.validParentType.some((item) =>
     block.validParentType.some((p) => p === item)
   );
 
@@ -74,7 +74,8 @@ export function ToolsBar({ block }: { block: IBlock; }) {
         parentIdx: parentIdx,
         positionIndex: getIndexByIdx(focusIdx) + 1,
         payload: {
-          children: sectionBlock.create({
+          children: sectionBlock?.create({
+            // @ts-ignore
             children: [columnBlock.create({})],
           }),
         },
@@ -86,6 +87,7 @@ export function ToolsBar({ block }: { block: IBlock; }) {
         parentIdx: parentIdx,
         positionIndex: getIndexByIdx(focusIdx) + 1,
         payload: {
+          // @ts-ignore
           children: [columnBlock.create({})],
         },
       });
@@ -109,27 +111,36 @@ export function ToolsBar({ block }: { block: IBlock; }) {
     setModalVisible(false);
   };
 
+
+
   return (
     <>
+
       <div
-        style={{
-          position: 'absolute',
-          left: 0,
-          top: 0,
-          fontSize: 14,
-          zIndex: 3,
-          color: '#000',
-          width: '100%',
-          pointerEvents: 'none',
-          lineHeight: '22px',
-        }}
+        // style={{
+        //   position: 'absolute',
+        //   left: 0,
+        //   top: -22,
+        //   fontSize: 14,
+        //   zIndex: 3,
+        //   color: '#000',
+        //   width: '100%',
+        //   pointerEvents: 'none',
+        //   lineHeight: '22px',
+        // }}
       >
         <div
           style={{
             color: '#ffffff',
-            transform: 'translateY(-100%)',
+            ///transform: 'translateY(-100%)',
             display: 'flex',
             // justifyContent: 'space-between',
+            position: 'absolute',
+              left: 0,
+              top: -22,
+              fontSize: 14,
+              zIndex: 9999,
+              pointerEvents:"auto"
           }}
         >
           <div
@@ -166,10 +177,10 @@ export function ToolsBar({ block }: { block: IBlock; }) {
               onClick={handleSelectParent}
             />
             <ToolItem iconName='icon-copy' onClick={handleCopy} />
-            <ToolItem
+            {/* <ToolItem
               iconName='icon-collection'
               onClick={handleAddToCollection}
-            />
+            /> */}
             <ToolItem iconName='icon-delete' onClick={handleDelete} />
           </div>
         </div>
@@ -286,6 +297,7 @@ function ToolItem(props: {
         pointerEvents: 'auto',
         cursor: 'pointer',
         justifyContent: 'center',
+        zIndex:10000
       }}
       className={classnames('iconfont', props.iconName)}
     />

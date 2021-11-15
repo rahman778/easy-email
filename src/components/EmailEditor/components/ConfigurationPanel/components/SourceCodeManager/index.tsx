@@ -63,7 +63,7 @@ export function SourceCodeManager() {
           const parentBlock = getParentByIdx(values, focusIdx)!;
           const parseBlock = BlocksMap.findBlockByType(parseValue.type);
 
-          if (!parseBlock.validParentType.includes(parentBlock?.type)) {
+          if (!parseBlock?.validParentType.includes(parentBlock?.type)) {
             throw new Error('Invalid content');
           }
         } else if (focusIdx !== getPageIdx()) {

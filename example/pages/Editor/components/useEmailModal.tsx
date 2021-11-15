@@ -43,7 +43,7 @@ export function useEmailModal() {
       const html = mjml(transformToMjml({
         data: customBlockData,
         mode: 'production',
-        context: customBlockData
+        context: customBlockData,
       }), {
         beautify: true,
         validationLevel: 'soft',

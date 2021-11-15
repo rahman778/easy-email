@@ -13,7 +13,7 @@ import './index.scss';
 import { AllowDrop } from 'rc-tree/lib/Tree';
 import { BlocksMap } from '@/components/core/blocks';
 import { BlockType } from '@/constants';
-import { useBlock } from 'easy-email-editor';
+import { useBlock } from '@/hooks/useBlock';
 
 interface IBlockDataWithId extends IBlockData {
   key: string;

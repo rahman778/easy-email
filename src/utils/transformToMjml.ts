@@ -1,138 +1,127 @@
-import { parseMjmlBlockToBlockData } from '@/utils/parseMjmlBlockToBlockData';
-import { isValidElement } from 'react';
-import { BlocksMap } from '@/components/core/blocks';
-import { ICarousel } from '@/components/core/blocks/basic/Carousel';
-import { INavbar } from '@/components/core/blocks/basic/Navbar';
-import { IPage } from '@/components/core/blocks/basic/Page';
-import { ISocial } from '@/components/core/blocks/basic/Social';
-import { BasicType, BlockType } from '@/constants';
-import { IBlockData } from '@/typings';
-import { pickBy, identity, isObject, isBoolean } from 'lodash';
-import {
-  getChildIdx,
-  getNodeIdxClassName,
-  getNodeTypeClassName,
-} from './block';
-import { classnames } from './classnames';
+import { parseMjmlBlockToBlockData } from "@/utils/parseMjmlBlockToBlockData";
+import { isValidElement } from "react";
+import { BlocksMap } from "@/components/core/blocks";
+import { ICarousel } from "@/components/core/blocks/basic/Carousel";
+import { INavbar } from "@/components/core/blocks/basic/Navbar";
+import { IPage } from "@/components/core/blocks/basic/Page";
+import { ISocial } from "@/components/core/blocks/basic/Social";
+import { BasicType, BlockType } from "@/constants";
+import { IBlockData } from "@/typings";
+import { pickBy, identity, isObject, isBoolean } from "lodash";
+import { getChildIdx, getNodeIdxClassName, getNodeTypeClassName } from "./block";
+import { classnames } from "./classnames";
+import { ITable } from "@/components/core/blocks/basic/Table";
 
 export type TransformToMjmlOption =
-  | {
-    data: IBlockData;
-    idx: string | null; // current idx
-    context: IBlockData;
-    mode: 'testing';
-  }
-  | {
-    idx?: string | null; // current idx, default page idx
-    data: IBlockData;
-    context: IBlockData;
-    mode: 'production';
-  };
+   | {
+        data: IBlockData;
+        idx: string | null; // current idx
+        context: IBlockData;
+        mode: "testing";
+        preview?: boolean;
+     }
+   | {
+        idx?: string | null; // current idx, default page idx
+        data: IBlockData;
+        context: IBlockData;
+        mode: "production";
+        preview?: boolean;
+     };
 
 export function transformToMjml(options: TransformToMjmlOption): string {
-  const {
-    data,
-    idx = 'content',
-    context = data,
-    mode = 'production',
-  } = options;
-  if ((isBoolean(data?.data?.hidden) && data?.data?.hidden) || data?.data?.hidden === 'true') {
-    return '';
-  }
+   const { data, idx = "content", context = data, mode = "production", preview } = options;
+   if ((isBoolean(data?.data?.hidden) && data?.data?.hidden) || data?.data?.hidden === "true") {
+      return "";
+   }
 
-  const att = pickBy(
-    {
-      ...data.attributes,
-    },
-    identity
-  );
-
-  const isTest = mode === 'testing';
-  const placeholder = isTest && idx ? renderPlaceholder(data.type) : '';
-
-  if (isTest && idx) {
-    att['css-class'] = classnames(
-      att['css-class'],
-      'email-block',
-      getNodeIdxClassName(idx),
-      getNodeTypeClassName(data.type)
-    );
-  }
-
-  if (data.type === BasicType.PAGE) {
-    att['css-class'] = classnames(att['css-class'], 'mjml-body');
-  }
-
-  const attributeStr = Object.keys(att)
-    .filter((key) => att[key] !== '') // filter att=""
-    .map((key) => `${key}="${att[key]}"`)
-    .join(' ');
-
-  const block = BlocksMap.findBlockByType(data.type);
-
-  if (!block) {
-    throw new Error(
-      `Can not find ${data.type} block!!! Have you registered this block ?`
-    );
-  }
-
-  if (block.render) {
-    const transformBlockData = block.render(data, idx, context);
-    const transformData = isValidElement(transformBlockData)
-      ? parseMjmlBlockToBlockData(transformBlockData)
-      : transformBlockData;
-    att['css-class'] = classnames(att['css-class'], transformData['css-class']);
-    return transformToMjml({
-      data: {
-        ...transformData,
-        attributes: {
-          ...transformData.attributes,
-          'css-class': att['css-class'],
-        },
+   const att = pickBy(
+      {
+         ...data.attributes,
       },
-      idx: data.children.length > 0 ? idx : null,
-      context,
-      mode,
-    });
-  }
+      identity
+   );
 
-  const children = data.children
-    .map((child, index) =>
-      transformToMjml({
-        data: child,
-        idx: idx ? getChildIdx(idx, index) : null,
-        context,
-        mode,
-      })
-    )
-    .join('\n');
+   const isTest = mode === "testing";
+   const placeholder = isTest && idx ? renderPlaceholder(data.type) : "";
 
-  switch (data.type) {
-    case BasicType.PAGE:
-      const metaData = generaMjmlMetaData(data);
-      const value: IPage['data']['value'] = data.data.value;
+   if (isTest && idx) {
+      att["css-class"] = classnames(att["css-class"], "email-block", getNodeIdxClassName(idx), getNodeTypeClassName(data.type));
+   }
 
-      const breakpoint = value.breakpoint
-        ? `<mj-breakpoint width="${data.data.value.breakpoint}" />`
-        : '';
+   if (data.type === BasicType.PAGE) {
+      att["css-class"] = classnames(att["css-class"], "mjml-body");
+   }
 
-      const nonResponsive = !value.responsive
-        ? `<mj-raw>
+   if (data.type === BasicType.WRAPPER) {
+      att["css-class"] = classnames(att["css-class"], "body-bg", "body-margins");
+   }
+
+   const attributeStr = Object.keys(att)
+      .filter((key) => att[key] !== "") // filter att=""
+      .map((key) => `${key}="${att[key]}"`)
+      .join(" ");
+
+   const block = BlocksMap.findBlockByType(data.type);
+
+   if (!block) {
+      throw new Error(`Can not find ${data.type} block!!! Have you registered this block ?`);
+   }
+
+   if (block.render) {
+      const transformBlockData = block.render(data, idx, context);
+      const transformData = isValidElement(transformBlockData) ? parseMjmlBlockToBlockData(transformBlockData) : transformBlockData;
+      att["css-class"] = classnames(att["css-class"], transformData["css-class"]);
+      return transformToMjml({
+         data: {
+            ...transformData,
+            attributes: {
+               ...transformData.attributes,
+               "css-class": att["css-class"],
+            },
+         },
+         idx: data.children.length > 0 ? idx : null,
+         context,
+         mode,
+      });
+   }
+
+   const children = data.children
+      .map((child, index) =>
+         transformToMjml({
+            data: child,
+            idx: idx ? getChildIdx(idx, index) : null,
+            context,
+            mode,
+         })
+      )
+      .join("\n");
+
+   let dimension = { width: "200px", height: "200px" };
+   if (data.attributes.pageSize === "A4") {
+      dimension = { width: "500px", height: "600px" };
+   } else if (data.attributes.pageSize === "letter") {
+      dimension = { width: "600px", height: "800px" };
+   }
+
+   const { marginTop, marginBottom, marginLeft, marginRight } = data.attributes;
+
+   switch (data.type) {
+      case BasicType.PAGE:
+         const metaData = generaMjmlMetaData(data);
+         const value: IPage["data"]["value"] = data.data.value;
+
+         const breakpoint = value.breakpoint ? `<mj-breakpoint width="${data.data.value.breakpoint}" />` : "";
+
+         const nonResponsive = !value.responsive
+            ? `<mj-raw>
             <meta name="viewport" />
            </mj-raw>
-           <mj-style inline="inline">.mjml-body { width: ${data.attributes.width || '600px'
-        }; margin: 0px auto; }</mj-style>`
-        : '';
-      const styles =
-        value.headStyles
-          ?.map(
-            (style) =>
-              `<mj-style ${style.inline ? 'inline="inline"' : ''}>${style.content
-              }</mj-style>`
-          )
-          .join('\n') || '';
+           <mj-style inline="inline">.mjml-body { width: ${dimension?.width}; { height: ${dimension?.height}; margin: 0px auto; position:"relative" } .body-margins{inset:${marginTop} ${marginRight} ${marginBottom} ${marginLeft}}</mj-style>`
+            : "";
+         const styles =
+            value.headStyles?.map((style) => `<mj-style ${style.inline ? 'inline="inline"' : ""}>${style.content}</mj-style>`).join("\n") || "";
 
-      return `
+         return `
         <mjml>
           <mj-head>
               ${metaData}
@@ -141,34 +130,18 @@ export function transformToMjml(options: TransformToMjmlOption): string {
               ${breakpoint}
             <mj-attributes>
               ${value.headAttributes}
-              ${value['font-family']
-          ? `<mj-all font-family="${value['font-family']}" />`
-          : ''
-        }
-              ${value['font-size']
-          ? `<mj-text font-size="${value['font-size']}" />`
-          : ''
-        }
-              ${value['text-color']
-          ? `<mj-text color="${value['text-color']}" />`
-          : ''
-        }
-              ${value['line-height']
-          ? `<mj-text line-height="${value['line-height']}" />`
-          : ''
-        }
-              ${value['content-background-color']
-          ? `<mj-wrapper background-color="${value['content-background-color']}" />
-                     <mj-section background-color="${value['content-background-color']}" />
+              ${value["font-family"] ? `<mj-all font-family="${value["font-family"]}" />` : ""}
+              ${value["font-size"] ? `<mj-text font-size="${value["font-size"]}" />` : ""}
+              ${value["text-color"] ? `<mj-text color="${value["text-color"]}" />` : ""}
+              ${value["line-height"] ? `<mj-text line-height="${value["line-height"]}" />` : ""}
+              ${
+                 value["content-background-color"]
+                    ? `<mj-wrapper background-color="${value["content-background-color"]}" />
+                     <mj-section background-color="${value["content-background-color"]}" />
                     `
-          : ''
-        }
-              ${value.fonts
-          ?.filter(Boolean)
-          .map(
-            (item) =>
-              `<mj-font name="${item.name}" href="${item.href}" />`
-          )}
+                    : ""
+              }
+              ${value.fonts?.filter(Boolean).map((item) => `<mj-font name="${item.name}" href="${item.href}" />`)}
             </mj-attributes>
           </mj-head>
           <mj-body ${attributeStr}>
@@ -176,107 +149,141 @@ export function transformToMjml(options: TransformToMjmlOption): string {
           </mj-body>
         </mjml>
         `;
-    case BasicType.COLUMN:
-      return `
+      case BasicType.COLUMN:
+         return `
               <mj-column ${attributeStr}>
                ${children || placeholder}
               </mj-column>
             `;
-    case BasicType.SECTION:
-      return `
+      case BasicType.SECTION:
+         return `
               <mj-section ${attributeStr}>
                ${children || `<mj-column>${placeholder}</mj-column>`}
               </mj-section>
             `;
-    case BasicType.GROUP:
-      return `
+      case BasicType.GROUP:
+         return `
               <mj-group ${attributeStr}>
                ${children || `<mj-column>${placeholder}</mj-column>`}
               </mj-group>
             `;
-    case BasicType.WRAPPER:
-      return `
+      case BasicType.WRAPPER:
+         return `
               <mj-wrapper ${attributeStr}>
-               ${children ||
-        `<mj-section><mj-column>${placeholder}</mj-column></mj-section>`
-        }
+               ${children || `<mj-section><mj-column>${placeholder}</mj-column></mj-section>`}
               </mj-wrapper>
             `;
-    case BasicType.CAROUSEL:
-      const carouselImages = (data as ICarousel).data.value.images
-        .map((image, index) => {
-          const imageAttributeStr = Object.keys(image)
-            .filter((key) => key !== 'content' && att[key] !== '') // filter att=""
-            .map((key) => `${key}="${image[key]}"`)
-            .join(' ');
-          return `
+      case BasicType.CAROUSEL:
+         const carouselImages = (data as ICarousel).data.value.images
+            .map((image, index) => {
+               const imageAttributeStr = Object.keys(image)
+                  .filter((key) => key !== "content" && att[key] !== "") // filter att=""
+                  .map((key) => `${key}="${image[key]}"`)
+                  .join(" ");
+               return `
           <mj-carousel-image ${imageAttributeStr} />
           `;
-        })
-        .join('\n');
+            })
+            .join("\n");
 
-      return `
+         return `
         <mj-carousel ${attributeStr}>
          ${carouselImages}
         </mj-carousel>
       `;
-    case BasicType.NAVBAR:
-      const links = (data as INavbar).data.value.links
-        .map((link, index) => {
-          const linkAttributeStr = Object.keys(link)
-            .filter((key) => key !== 'content' && att[key] !== '') // filter att=""
-            .map((key) => `${key}="${link[key]}"`)
-            .join(' ');
-          return `
+      case BasicType.NAVBAR:
+         const links = (data as INavbar).data.value.links
+            .map((link, index) => {
+               const linkAttributeStr = Object.keys(link)
+                  .filter((key) => key !== "content" && att[key] !== "") // filter att=""
+                  .map((key) => `${key}="${link[key]}"`)
+                  .join(" ");
+               return `
           <mj-navbar-link ${linkAttributeStr}>${link.content}</mj-navbar-link>
           `;
-        })
-        .join('\n');
-      return `
+            })
+            .join("\n");
+         return `
               <mj-navbar ${attributeStr}>
                ${links}
               </mj-navbar>
             `;
-    case BasicType.SOCIAL:
-      const elements = (data as ISocial).data.value.elements
-        .map((element, index) => {
-          const elementAttributeStr = Object.keys(element)
-            .filter((key) => key !== 'content' && att[key] !== '') // filter att=""
-            .map((key) => `${key}="${element[key]}"`)
-            .join(' ');
-          return `
+      case BasicType.SOCIAL:
+         const elements = (data as ISocial).data.value.elements
+            .map((element, index) => {
+               const elementAttributeStr = Object.keys(element)
+                  .filter((key) => key !== "content" && att[key] !== "") // filter att=""
+                  .map((key) => `${key}="${element[key]}"`)
+                  .join(" ");
+               return `
           <mj-social-element ${elementAttributeStr}>${element.content}</mj-social-element>
           `;
-        })
-        .join('\n');
-      return `
+            })
+            .join("\n");
+         return `
               <mj-social ${attributeStr}>
                ${elements}
               </mj-social>
             `;
 
-    default:
-      return `
-          <mj-${data.type} ${attributeStr}>
-           ${children || data.data.value?.content || ''}
+      case BasicType.TABLE:
+         // const getKeys = function () {
+         //    return Object.values((data as ITable).data.value.contents[0]);
+         // };
+
+         const getHeader = function () {
+            //let keys = getKeys();
+            return (data as ITable).data.value.headers.map((key, index) => {
+               return `<th ${attributeStr} key={${index}}>${key.text}</th>`;
+            });
+         };
+
+         const RenderRow = (data) => {
+            return data.map((key, index) => {
+               return `<td ${attributeStr} key={${key}}>${key}</td>`;
+            });
+         };
+
+         const getRowsData = function () {
+            var items = (data as ITable).data.value.contents;
+            return items.map((row, index) => {
+               return `<tr style="border:1px solid #000;" key={${index}}>
+               ${RenderRow(row)}
+               </tr>`;
+            });
+         };
+
+         return `
+                  <mj-table>
+                  <tr style="border:1px solid #000;">
+                     ${getHeader()}
+                  </tr>
+                     ${getRowsData()}
+                  </mj-table>
+               `;
+
+      default:
+         return `
+          <mj-${data.type} ${attributeStr} >
+           ${children || data.data.value?.content || ""}
           </mj-${data.type}>
         `;
-  }
+   }
 }
 
 export function renderPlaceholder(type: BlockType) {
-  let text = '';
-  if (type === BasicType.PAGE) {
-    text = 'Drop a Wrapper block here';
-  } else if (type === BasicType.WRAPPER) {
-    text = 'Drop a Section block here';
-  } else if (type === BasicType.SECTION || type === BasicType.GROUP) {
-    text = 'Drop a Column block here';
-  } else if (type === BasicType.COLUMN) {
-    text = 'Drop a content block here';
-  }
+   let text = "";
+   if (type === BasicType.PAGE) {
+      text = "Drop a Wrapper block here";
+   } else if (type === BasicType.WRAPPER) {
+      text = "Drop a Section block here";
+   } else if (type === BasicType.SECTION || type === BasicType.GROUP) {
+      text = "Drop a Column block here";
+   } else if (type === BasicType.COLUMN) {
+      text = "Drop a content block here";
+   }
 
-  return `
+   return `
    <mj-text color="#666">
     <div style="text-align: center">
       <div>
@@ -293,30 +300,22 @@ export function renderPlaceholder(type: BlockType) {
 }
 
 export function generaMjmlMetaData(data: IPage) {
-  const values = data.data.value;
-  const attributes = [
-    'content-background-color',
-    'text-color',
-    'font-family',
-    'font-size',
-    'line-height',
-    'user-style',
-    'responsive',
-  ];
-  return `
+   const values = data.data.value;
+   const attributes = ["content-background-color", "text-color", "font-family", "font-size", "line-height", "user-style", "responsive"];
+   return `
     <mj-html-attributes>
       ${attributes
-      .filter((key) => values[key] !== undefined)
-      .map((key) => {
-        const isMultipleAttributes = isObject(values[key]);
-        const value = isMultipleAttributes
-          ? Object.keys(values[key])
-            .map((childKey) => `${childKey}="${values[key][childKey]}"`)
-            .join(' ')
-          : `${key}="${values[key]}"`;
-        return `<mj-html-attribute class="easy-email" multiple-attributes="${isMultipleAttributes}" attribute-name="${key}" ${value}></mj-html-attribute>`;
-      })
-      .join('\n')}
+         .filter((key) => values[key] !== undefined)
+         .map((key) => {
+            const isMultipleAttributes = isObject(values[key]);
+            const value = isMultipleAttributes
+               ? Object.keys(values[key])
+                    .map((childKey) => `${childKey}="${values[key][childKey]}"`)
+                    .join(" ")
+               : `${key}="${values[key]}"`;
+            return `<mj-html-attribute class="easy-email" multiple-attributes="${isMultipleAttributes}" attribute-name="${key}" ${value}></mj-html-attribute>`;
+         })
+         .join("\n")}
 
     </mj-html-attributes>
   `;

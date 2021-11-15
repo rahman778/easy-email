@@ -6,6 +6,7 @@ import {
   SwitchField,
   TextAreaField,
   TextField,
+  SelectField
 } from '@/components/core/Form';
 import { Help } from '@/components/UI/Help';
 import { TextStyle } from '@/components/UI/TextStyle';
@@ -13,6 +14,18 @@ import { AddFont } from '@/components/core/Form/AddFont';
 import { useFocusIdx } from '@/hooks/useFocusIdx';
 import { AttributesPanelWrapper } from '@/components/core/wrapper/AttributesPanelWrapper';
 import { Collapse } from 'antd';
+import { Margin } from '@/components/EmailEditor/components/ConfigurationPanel/components/AttributesManager/components/Margin';
+
+const pageOptions = [
+  {
+    value: 'A4',
+    label: 'A4',
+  },
+  {
+    value: 'letter',
+    label: 'Letter',
+  },
+];
 
 export function Panel() {
   const { focusIdx } = useFocusIdx();
@@ -22,16 +35,23 @@ export function Panel() {
     <AttributesPanelWrapper style={{ padding: 0 }}>
       <Stack.Item fill>
         <Collapse defaultActiveKey={['0', '1']}>
-          <Collapse.Panel key='0' header='Email Setting'>
+          <Collapse.Panel key='0' header='Layout Setting'>
             <Stack vertical spacing='tight'>
-              <TextField label='Subject' name={'subject'} inline />
-              <TextField label='SubTitle' name={'subTitle'} inline />
+              {/* <TextField label='Subject' name={'subject'} inline />
+              <TextField label='SubTitle' name={'subTitle'} inline /> */}
               <TextField
                 label='Width'
                 name={`${focusIdx}.attributes.width`}
                 inline
               />
-              <Stack alignment='center'>
+              <SelectField
+          //style={{ width: 120 }}
+          label='Page size'
+          name={`${focusIdx}.attributes.pageSize`}
+          options={pageOptions}
+          inline
+        />
+              {/* <Stack alignment='center'>
                 <TextField
                   label={(
                     <Stack spacing='extraTight'>
@@ -43,14 +63,20 @@ export function Panel() {
                   name={`${focusIdx}.data.value.breakpoint`}
                   inline
                 />
-              </Stack>
-              <SwitchField
+              </Stack> */}
+              {/* <SwitchField
                 inline
                 label='Responsive'
                 name={`${focusIdx}.data.value.responsive`}
                 checkedChildren='True'
                 unCheckedChildren='False'
-              />
+              /> */}
+
+<Stack vertical spacing="tight">
+            <Margin />
+          </Stack>
+
+
             </Stack>
           </Collapse.Panel>
           <Collapse.Panel key='1' header='Theme Setting'>

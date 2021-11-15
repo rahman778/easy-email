@@ -149,7 +149,7 @@ export const BlockSortableWrapper: React.FC<BlockSortableWrapperProps> = (
       if (!type || !dragoverType) return false;
 
       const block = BlocksMap.findBlockByType(type);
-      const isValid = block.validParentType.includes(dragoverType);
+      const isValid = block?.validParentType.includes(dragoverType);
       const targetIdx = evt.related.getAttribute('data-idx')!;
 
       if (isValid) {

@@ -19,6 +19,8 @@
     "sourceMap": true,
     "jsx": "react",
     "baseUrl": ".",
+    "useUnknownInCatchVariables": false,
+    "outDir": "lib",
     "paths": {
       "easy-email-editor": ["src/index"],
       "@example/components/Form": ["src/components/core/Form"],

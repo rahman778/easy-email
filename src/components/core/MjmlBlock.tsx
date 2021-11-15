@@ -34,7 +34,7 @@ export default function MjmlBlock<T extends IBlockData>({
     return value;
   }, [children, value]);
 
-  const instance = block.create({
+  const instance = block?.create({
     data: {
       value: mergeValue,
     },

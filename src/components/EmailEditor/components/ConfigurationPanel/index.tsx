@@ -10,9 +10,9 @@ export function ConfigurationPanel() {
         <Tabs.TabPane key='Configuration' tab='Configuration'>
           <AttributesManager />
         </Tabs.TabPane>
-        <Tabs.TabPane key='Source code' tab='Source code'>
+        {/* <Tabs.TabPane key='Source code' tab='Source code'>
           <SourceCodeManager />
-        </Tabs.TabPane>
+        </Tabs.TabPane> */}
       </Tabs>
     ),
     []

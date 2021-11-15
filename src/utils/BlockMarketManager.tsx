@@ -13,6 +13,7 @@ import {
   TextBlockItem,
   DividerBlockItem,
   WrapperBlockItem,
+  TableBlockItem,
   BasicType,
 } from '@/components/EmailEditor/components/BlocksPanel/presetTemplate';
 import { Stack } from '@/components/UI/Stack';
@@ -51,26 +52,26 @@ const defaultCategories = [
         ),
         ExampleComponent: ImageBlockItem,
       },
-      {
-        type: BasicType.BUTTON,
-        title: 'Button',
-        description: 'Displays a customizable button.',
-        ExampleComponent: ButtonBlockItem,
-      },
-      {
-        type: BasicType.HERO,
-        title: 'Hero',
-        description: `This block displays a hero image. It behaves like an
-        'section' with a single 'column'.`,
-        ExampleComponent: HeroBlockItem,
-      },
-      {
-        type: BasicType.NAVBAR,
-        title: 'Navbar',
-        description: `Displays a menu for navigation with an optional hamburger
-        mode for mobile devices.`,
-        ExampleComponent: NavbarBlockItem,
-      },
+      // {
+      //   type: BasicType.BUTTON,
+      //   title: 'Button',
+      //   description: 'Displays a customizable button.',
+      //   ExampleComponent: ButtonBlockItem,
+      // },
+      // {
+      //   type: BasicType.HERO,
+      //   title: 'Hero',
+      //   description: `This block displays a hero image. It behaves like an
+      //   'section' with a single 'column'.`,
+      //   ExampleComponent: HeroBlockItem,
+      // },
+      // {
+      //   type: BasicType.NAVBAR,
+      //   title: 'Navbar',
+      //   description: `Displays a menu for navigation with an optional hamburger
+      //   mode for mobile devices.`,
+      //   ExampleComponent: NavbarBlockItem,
+      // },
       {
         type: BasicType.SPACER,
         title: 'Spacer',
@@ -84,31 +85,38 @@ const defaultCategories = [
         HTML border.`,
         ExampleComponent: DividerBlockItem,
       },
+      // {
+      //   type: BasicType.ACCORDION,
+      //   title: 'Accordion',
+      //   description: `Accordion is an interactive component to stack content in
+      //   tabs, so the information is collapsed and only the titles
+      //   are visible. Readers can interact by clicking on the tabs
+      //   to reveal the content, providing a great experience on
+      //   mobile devices where space is scarce.`,
+      //   ExampleComponent: AccordionBlockItem,
+      // },
       {
-        type: BasicType.ACCORDION,
-        title: 'Accordion',
+        type: BasicType.TABLE,
+        title: 'Table',
         description: `Accordion is an interactive component to stack content in
-        tabs, so the information is collapsed and only the titles
-        are visible. Readers can interact by clicking on the tabs
-        to reveal the content, providing a great experience on
-        mobile devices where space is scarce.`,
-        ExampleComponent: AccordionBlockItem,
+        tabs, so the `,
+        ExampleComponent: TableBlockItem,
       },
-      {
-        type: BasicType.CAROUSEL,
-        title: 'Carousel',
-        description: `This block displays a gallery of images or "carousel".
-        Readers can interact by hovering and clicking on
-        thumbnails depending on the email client they use.`,
-        ExampleComponent: CarouselBlockItem,
-      },
-      {
-        type: BasicType.SOCIAL,
-        title: 'Social',
-        description: `Displays calls-to-action for various social networks with
-        their associated logo.`,
-        ExampleComponent: SocialBlockItem,
-      },
+      // {
+      //   type: BasicType.CAROUSEL,
+      //   title: 'Carousel',
+      //   description: `This block displays a gallery of images or "carousel".
+      //   Readers can interact by hovering and clicking on
+      //   thumbnails depending on the email client they use.`,
+      //   ExampleComponent: CarouselBlockItem,
+      // },
+      // {
+      //   type: BasicType.SOCIAL,
+      //   title: 'Social',
+      //   description: `Displays calls-to-action for various social networks with
+      //   their associated logo.`,
+      //   ExampleComponent: SocialBlockItem,
+      // },
     ],
   },
   {

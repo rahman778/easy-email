@@ -151,10 +151,10 @@ export function ContextMenu({ ele, idx }: { ele: HTMLElement; idx: string; }) {
           <IconFont iconName='icon-delete' style={{ marginRight: 10 }} />{' '}
           <TextStyle>Delete</TextStyle>
         </div>
-        <div className={styles.listItem} onClick={handleAddToCollection}>
+        {/* <div className={styles.listItem} onClick={handleAddToCollection}>
           <IconFont iconName='icon-start' style={{ marginRight: 10 }} />{' '}
           <TextStyle>Add to collection</TextStyle>
-        </div>
+        </div> */}
         <Form
           initialValues={{ label: '', helpText: '', thumbnail: '' }}
           onSubmit={onSubmit}

@@ -18,6 +18,13 @@ export function MjmlDomRender() {
   const { dashed } = useContext(EditorPropsContext);
   const pageMaxWidth = content.attributes.width || '600px';
 
+  let dimension = { width: "200px", height: "200px" };
+   if (content.attributes.pageSize === "A4") {
+      dimension = { width: "500px", height: "600px" };
+   } else if (content.attributes.pageSize === "letter") {
+      dimension = { width: "600px", height: "800px" };
+   }
+
   useEffect(() => {
     if (!isEqual(content, pageData)) {
       setPageData(cloneDeep(content));
@@ -33,6 +40,7 @@ export function MjmlDomRender() {
         idx: getPageIdx(),
         context: pageData,
         mode: 'testing',
+        preview:false
       })
     ).html;
     return renderHtml;
@@ -44,8 +52,7 @@ export function MjmlDomRender() {
         data-dashed={dashed}
         ref={setRef}
         style={{
-
-          width: pageMaxWidth,
+          width: dimension.width,
           padding: '40px 0px',
           margin: 'auto',
           outline: 'none',
@@ -57,5 +64,5 @@ export function MjmlDomRender() {
         {ref && createPortal(HtmlStringToReactNodes(html), ref)}
       </div>
     );
-  }, [dashed, pageMaxWidth, ref, html]);
+  }, [dashed, dimension, ref, html]);
 }

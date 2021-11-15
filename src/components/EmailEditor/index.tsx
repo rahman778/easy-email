@@ -53,10 +53,9 @@ export const EmailEditor = (props: EmailEditorProps) => {
             display: 'flex',
             width: '100vw',
             overflow: 'hidden',
-            minWidth: 1400,
           }}
         >
-          <Layout.Sider
+          {/* <Layout.Sider
             theme='light'
             width={60}
             style={{ border: '1px solid #f0f0f0' }}
@@ -82,7 +81,7 @@ export const EmailEditor = (props: EmailEditorProps) => {
                 />
               </BlocksPanel>
             </Stack>
-          </Layout.Sider>
+          </Layout.Sider> */}
           <Layout.Sider
             style={{ height: containerHeight, borderLeft: 'none' }}
             theme='light'
@@ -131,6 +130,7 @@ export const EmailEditor = (props: EmailEditorProps) => {
                   }}
                   onChange={setActiveTab as any}
                   tabBarExtraContent={<ToolsPanel />}
+                  centered
                 >
                   <TabPane
                     tab={(
@@ -143,12 +143,12 @@ export const EmailEditor = (props: EmailEditorProps) => {
                   >
                     <div
                       style={{
-                        backgroundColor: 'transparent',
+                        backgroundColor: '#E4E7EA',
                         height: '100%',
                         position: 'relative',
                       }}
                     >
-                      <EditEmailPreview />
+                      <EditEmailPreview/>
                     </div>
                   </TabPane>
                   <TabPane
@@ -159,11 +159,12 @@ export const EmailEditor = (props: EmailEditorProps) => {
                       </Stack>
                     )}
                     key={ActiveTabKeys.PC}
-                    style={{ backgroundColor: 'transparent' }}
+                    style={{ backgroundColor: '#E4E7EA' }}
                   >
+                    {/* <EditEmailPreview/> */}
                     <DesktopEmailPreview />
                   </TabPane>
-                  <TabPane
+                  {/* <TabPane
                     tab={(
                       <Stack spacing='none'>
                         <TabletOutlined />
@@ -174,7 +175,7 @@ export const EmailEditor = (props: EmailEditorProps) => {
                     style={{ backgroundColor: 'transparent' }}
                   >
                     <MobileEmailPreview />
-                  </TabPane>
+                  </TabPane> */}
                 </Tabs>
               </div>
             </Card>

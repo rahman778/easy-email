@@ -1,9 +1,9 @@
-import { BlocksMap } from './../components/core/blocks/index';
-import { findBlockNode } from './findBlockNode';
-import { DirectionPosition } from './getDirectionPosition';
-import { BlockType } from '@/constants';
-import { getNodeTypeFromClassName } from './block';
-import { ancestorOf } from './ancestorOf';
+import { BlocksMap } from "./../components/core/blocks/index";
+import { findBlockNode } from "./findBlockNode";
+import { DirectionPosition } from "./getDirectionPosition";
+import { BlockType } from "@/constants";
+import { getNodeTypeFromClassName } from "./block";
+import { ancestorOf } from "./ancestorOf";
 
 /**
  * Can it be connected by completion, like text => section
@@ -13,26 +13,18 @@ import { ancestorOf } from './ancestorOf';
  * @param autoComplete
  * @returns
  */
-export function findInsertNode(
-  dragType: BlockType,
-  node: HTMLElement,
-  direction: DirectionPosition,
-  autoComplete: boolean
-): HTMLElement | null {
-  const block = BlocksMap.findBlockByType(dragType);
-  if (!block) return null;
-  const targetNode = findBlockNode(node);
-  if (!targetNode) return null;
-  const targetType = getNodeTypeFromClassName(
-    targetNode.classList
-  ) as BlockType;
+export function findInsertNode(dragType: BlockType, node: HTMLElement, direction: DirectionPosition, autoComplete: boolean): HTMLElement | null {
+   const block = BlocksMap.findBlockByType(dragType);
+   if (!block) return null;
+   const targetNode = findBlockNode(node);
+   if (!targetNode) return null;
+   const targetType = getNodeTypeFromClassName(targetNode.classList) as BlockType;
 
-  if (autoComplete && ancestorOf(dragType, targetType) > 0) {
-    return node;
-  }
-  if (!direction.horizontal.direction || !direction.vertical.direction)
-    return null;
-  return getMatchBlock(dragType, node);
+   if (autoComplete && ancestorOf(dragType, targetType) > 0) {
+      return node;
+   }
+   if (!direction.horizontal.direction || !direction.vertical.direction) return null;
+   return getMatchBlock(dragType, node);
 }
 
 /**
@@ -54,24 +46,19 @@ export function findInsertNode(
  * @returns
  */
 
-function getMatchBlock(
-  dragType: BlockType,
-  node: HTMLElement
-): HTMLElement | null {
-  const draggingBlock = BlocksMap.findBlockByType(dragType);
-  let targetNode = findBlockNode(node);
+function getMatchBlock(dragType: BlockType, node: HTMLElement): HTMLElement | null {
+   const draggingBlock = BlocksMap.findBlockByType(dragType);
+   let targetNode = findBlockNode(node);
 
-  while (targetNode) {
-    if (!(targetNode instanceof HTMLElement)) return null;
+   while (targetNode) {
+      if (!(targetNode instanceof HTMLElement)) return null;
 
-    const targetType = getNodeTypeFromClassName(
-      targetNode.classList
-    ) as BlockType;
+      const targetType = getNodeTypeFromClassName(targetNode.classList) as BlockType;
 
-    if (draggingBlock.validParentType.includes(targetType)) {
-      return targetNode;
-    }
-    targetNode = findBlockNode(targetNode.parentElement);
-  }
-  return targetNode;
+      if (draggingBlock?.validParentType.includes(targetType)) {
+         return targetNode;
+      }
+      targetNode = findBlockNode(targetNode.parentElement);
+   }
+   return targetNode;
 }

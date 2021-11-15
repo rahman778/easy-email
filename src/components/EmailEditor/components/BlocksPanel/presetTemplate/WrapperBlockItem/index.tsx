@@ -169,6 +169,20 @@ const list = [
                   children: [],
                 },
                 {
+                  type: 'table',
+                  data: {
+                    value: {},
+                  },
+                  attributes: {
+                    align: 'center',
+                    'border-width': '1px',
+                    'border-style': 'dashed',
+                    'border-color': 'lightgrey',
+                    padding: '0 20px',
+                  },
+                  children: [],
+                },
+                {
                   type: 'text',
                   data: {
                     value: {

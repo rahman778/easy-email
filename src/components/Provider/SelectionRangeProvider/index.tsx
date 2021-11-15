@@ -15,6 +15,7 @@ export const SelectionRangeProvider: React.FC<{}> = (props) => {
   useEffect(() => {
     const onSelectionChange = () => {
       try {
+        // @ts-ignore
         const range = getShadowRoot().getSelection()?.getRangeAt(0);
         if (range) {
           setSelectionRange(range);

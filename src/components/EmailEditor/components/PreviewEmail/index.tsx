@@ -27,6 +27,7 @@ export function PreviewEmail(props: { scroll?: boolean; }) {
       data: injectData,
       mode: 'production',
       context: injectData,
+      preview:true
     })).html;
     setHtml(parseHtml);
 

@@ -11,7 +11,8 @@ export function EditEmailPreview() {
         height: '100%',
         zIndex: 10,
         position: 'relative',
-        outline: 'none'
+        outline: 'none',
+        //backgroundImage:''
       }}
     >
 

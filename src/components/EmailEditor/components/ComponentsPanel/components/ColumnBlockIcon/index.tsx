@@ -30,7 +30,7 @@ export function ColumnBlockIconPanel() {
 
 function OneColumn() {
   const payload = {
-    children: [Column.create()],
+    children: [Column?.create()],
   };
 
   return (
@@ -72,12 +72,12 @@ function TwoColumns() {
   const options = scales.map((scale) => ({
     payload: {
       children: [
-        Column.create({
+        Column?.create({
           attributes: {
             width: scale.scale[0] ? +scale.scale[0] + '%' : undefined,
           },
         }),
-        Column.create({
+        Column?.create({
           attributes: {
             width: scale.scale[1] ? +scale.scale[1] + '%' : undefined,
           },
@@ -148,17 +148,17 @@ function ThreeColumns() {
     avatar: scale.avatar,
     payload: {
       children: [
-        Column.create({
+        Column?.create({
           attributes: {
             width: scale.scale[0] ? +scale.scale[0] + '%' : undefined,
           },
         }),
-        Column.create({
+        Column?.create({
           attributes: {
             width: scale.scale[1] ? +scale.scale[1] + '%' : undefined,
           },
         }),
-        Column.create({
+        Column?.create({
           attributes: {
             width: scale.scale[2] ? +scale.scale[2] + '%' : undefined,
           },
@@ -204,10 +204,10 @@ function ThreeColumns() {
 function FourColumn() {
   const payload = {
     children: [
-      Column.create(),
-      Column.create(),
-      Column.create(),
-      Column.create(),
+      Column?.create(),
+      Column?.create(),
+      Column?.create(),
+      Column?.create(),
     ],
   };
   return (

@@ -44,7 +44,12 @@ export function FocusTooltip() {
 
   return (
     <>
+      <ToolsBar block={block} />
       {createPortal(
+        <>
+
+
+
         <div
           style={{
             position: 'absolute',
@@ -92,7 +97,7 @@ export function FocusTooltip() {
             </BlockAvatarWrapper>
           </div>
 
-          <ToolsBar block={block} />
+
           {/* outline */}
           <div
             style={{
@@ -108,8 +113,10 @@ export function FocusTooltip() {
               outline: '2px solid var(--selected-color)',
             }}
           />
-        </div>,
+        </div>
+        </>,
         blockNode
+
       )}
     </>
   );
