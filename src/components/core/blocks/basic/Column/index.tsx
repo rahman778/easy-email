@@ -42,5 +42,5 @@ export const Column = createBlock<IColumn>({
     };
     return merge(defaultData, payload);
   },
-  validParentType: [BasicType.SECTION, BasicType.GROUP],
+  validParentType: [BasicType.SECTION],
 });

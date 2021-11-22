@@ -29,7 +29,7 @@ export const Accordion = createBlock<IAccordion>({
   name: 'Accordion',
   type: BasicType.ACCORDION,
   Panel,
-  validParentType: [BasicType.COLUMN],
+  validParentType: [BasicType.WRAPPER],
   create: (payload) => {
     const defaultData: IAccordion = {
       type: BasicType.ACCORDION,

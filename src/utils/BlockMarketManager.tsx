@@ -123,13 +123,13 @@ const defaultCategories = [
     title: 'Layout',
     name: CategoryName.LAYOUT,
     blocks: [
-      {
-        type: BasicType.WRAPPER,
-        title: 'Wrapper',
-        description: `Wrapper enables to wrap multiple sections together. It's especially useful to achieve nested layouts with shared border or background images across sections.
-        `,
-        ExampleComponent: WrapperBlockItem,
-      },
+      // {
+      //   type: BasicType.WRAPPER,
+      //   title: 'Wrapper',
+      //   description: `Wrapper enables to wrap multiple sections together. It's especially useful to achieve nested layouts with shared border or background images across sections.
+      //   `,
+      //   ExampleComponent: WrapperBlockItem,
+      // },
       {
         type: BasicType.SECTION,
         title: 'Section',

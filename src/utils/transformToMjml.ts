@@ -45,7 +45,11 @@ export function transformToMjml(options: TransformToMjmlOption): string {
    const placeholder = isTest && idx ? renderPlaceholder(data.type) : "";
 
    if (isTest && idx) {
-      att["css-class"] = classnames(att["css-class"], "email-block", getNodeIdxClassName(idx), getNodeTypeClassName(data.type));
+      if (data.type === BasicType.TABLE_TEXT || data.type === BasicType.TABLE_TITLE) {
+         att["class"] = classnames(att["class"], "email-block", getNodeIdxClassName(idx), getNodeTypeClassName(data.type));
+      } else {
+         att["css-class"] = classnames(att["css-class"], "email-block", getNodeIdxClassName(idx), getNodeTypeClassName(data.type));
+      }
    }
 
    if (data.type === BasicType.PAGE) {
@@ -58,6 +62,15 @@ export function transformToMjml(options: TransformToMjmlOption): string {
 
    const attributeStr = Object.keys(att)
       .filter((key) => att[key] !== "") // filter att=""
+      .map((key) => `${key}="${att[key]}"`)
+      .join(" ");
+
+   const tableAttributeStr = Object.keys(att)
+      .filter((key) => !key.includes("class")) // filter att=""
+      .map((key) => `${key}:${att[key]}`)
+      .join(";");
+   const tableAttributeCls = Object.keys(att)
+      .filter((key) => key.includes("class")) // filter att=""
       .map((key) => `${key}="${att[key]}"`)
       .join(" ");
 
@@ -144,16 +157,18 @@ export function transformToMjml(options: TransformToMjmlOption): string {
               ${value.fonts?.filter(Boolean).map((item) => `<mj-font name="${item.name}" href="${item.href}" />`)}
             </mj-attributes>
           </mj-head>
-          <mj-body ${attributeStr}>
+          <mj-body  ${attributeStr}>
             ${children}
           </mj-body>
         </mjml>
         `;
       case BasicType.COLUMN:
          return `
+
               <mj-column ${attributeStr}>
                ${children || placeholder}
               </mj-column>
+
             `;
       case BasicType.SECTION:
          return `
@@ -226,42 +241,21 @@ export function transformToMjml(options: TransformToMjmlOption): string {
               </mj-social>
             `;
 
-      case BasicType.TABLE:
-         // const getKeys = function () {
-         //    return Object.values((data as ITable).data.value.contents[0]);
-         // };
-
-         const getHeader = function () {
-            //let keys = getKeys();
-            return (data as ITable).data.value.headers.map((key, index) => {
-               return `<th ${attributeStr} key={${index}}>${key.text}</th>`;
-            });
-         };
-
-         const RenderRow = (data) => {
-            return data.map((key, index) => {
-               return `<td ${attributeStr} key={${key}}>${key}</td>`;
-            });
-         };
-
-         const getRowsData = function () {
-            var items = (data as ITable).data.value.contents;
-            return items.map((row, index) => {
-               return `<tr style="border:1px solid #000;" key={${index}}>
-               ${RenderRow(row)}
-               </tr>`;
-            });
-         };
-
-         return `
-                  <mj-table>
-                  <tr style="border:1px solid #000;">
-                     ${getHeader()}
-                  </tr>
-                     ${getRowsData()}
-                  </mj-table>
+      case BasicType.TABLE_ELEMENT:
+         return `<tr style="${tableAttributeStr}}" ${tableAttributeCls}>
+                  ${children || data.data.value?.content || ""}
+               </tr>
                `;
-
+      case BasicType.TABLE_TITLE:
+         return `<th style="${tableAttributeStr}" ${tableAttributeCls}>
+                  ${children || data.data.value?.content || ""}
+               </th>
+               `;
+      case BasicType.TABLE_TEXT:
+         return `<td style="${tableAttributeStr}" ${tableAttributeCls}>
+               ${children || data.data.value?.content || ""}
+            </td>
+            `;
       default:
          return `
           <mj-${data.type} ${attributeStr} >
@@ -276,7 +270,7 @@ export function renderPlaceholder(type: BlockType) {
    if (type === BasicType.PAGE) {
       text = "Drop a Wrapper block here";
    } else if (type === BasicType.WRAPPER) {
-      text = "Drop a Section block here";
+      return "";
    } else if (type === BasicType.SECTION || type === BasicType.GROUP) {
       text = "Drop a Column block here";
    } else if (type === BasicType.COLUMN) {

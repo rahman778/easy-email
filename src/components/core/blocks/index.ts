@@ -16,6 +16,9 @@ import { AccordionTitle } from "./basic/AccordionTitle";
 import { AccordionText } from "./basic/AccordionText";
 import { Carousel } from "./basic/Carousel";
 import { Table } from "./basic/Table";
+import { TableElement } from "./basic/TableElement";
+import { TableTitle } from "./basic/TableTitle";
+import { TableText } from "./basic/TableText";
 import { Hero } from "./basic/Hero";
 import { Navbar } from "./basic/Navbar";
 import { Social } from "./basic/Social";
@@ -42,8 +45,10 @@ const basicBlocks = {
    Hero,
    Navbar,
    Social,
-   // TODO:
    Table,
+   TableElement,
+   TableTitle,
+   TableText,
 };
 
 export class BlocksMap {

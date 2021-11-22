@@ -40,7 +40,7 @@ export const Section = createBlock<ISection>({
         },
       },
       attributes: {
-        padding: '20px 0px 20px 0px',
+        padding: '0px',
         'background-repeat': 'repeat',
         'background-size': 'auto',
         'background-position': 'top center',

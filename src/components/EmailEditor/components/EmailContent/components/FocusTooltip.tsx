@@ -47,9 +47,6 @@ export function FocusTooltip() {
       <ToolsBar block={block} />
       {createPortal(
         <>
-
-
-
         <div
           style={{
             position: 'absolute',

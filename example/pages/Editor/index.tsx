@@ -96,18 +96,27 @@ export default function Editor() {
   const mergeTags = useMemo(() => {
     return {
       user: {
-        name: 'Ryan',
-        avatar: 'https://assets.maocanhua.cn/bbb041da-62c3-4e6a-9648-60a06738836b-image.png'
+        id: '001',
       },
       company: {
-        name: 'Easy email',
+        name: 'BCH',
+        street: 'Castle street',
+        city: 'New york',
       },
       date: {
         today: () => new Date().toDateString(),
       },
-      condition: {
-        isHidden: true,
-        isNotHidden: false,
+      recipent: {
+        company: "ADS",
+       first_name: "john",
+       last_name: "Doe",
+       zip: "6005"
+      },
+      invoice: {
+        description: "some desc",
+       quantity: "10",
+       unit_price: "$20",
+       amount: "$200"
       }
     };
   }, []);

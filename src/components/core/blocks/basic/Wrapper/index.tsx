@@ -4,6 +4,7 @@ import { BasicType } from '@/constants';
 import { CSSProperties } from 'react';
 import { createBlock } from '@/utils/createBlock';
 import { merge } from 'lodash';
+import { Section } from '../Section';
 export type IWrapper = IBlockData<
   {
     'background-color'?: string;
@@ -28,7 +29,7 @@ export const Wrapper = createBlock<IWrapper>({
         value: {},
       },
       attributes: {
-        padding: '20px 0px 20px 0px',
+        padding: '0px',
         border: 'none',
         direction: 'ltr',
         'text-align': 'center',

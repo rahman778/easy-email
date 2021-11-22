@@ -18,3 +18,6 @@ export { Hero } from "./Hero";
 export { Navbar } from "./Navbar";
 export { Social } from "./Social";
 export { Table } from "./Table";
+export { TableElement } from "./TableElement";
+export { TableTitle } from "./TableTitle";
+export { TableText } from "./TableText";

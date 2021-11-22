@@ -42,18 +42,94 @@ const list = [
           ]
         },
       },
-    },
-  },
-  {
-    payload: {
-      type: BasicType.TABLE,
-      data: {
-        value: {
-          contents: [
-            {text : "sd"}
-          ]
+      children: [
+        {
+          type: 'table-element',
+          data: {
+            value: {},
+          },
+          attributes: {
+            'icon-align': 'middle',
+            'icon-height': '32px',
+            'icon-width': '32px',
+            'icon-position': 'right',
+            padding: '10px 25px 10px 25px',
+          },
+          children: [
+            {
+              type: 'table-title',
+              data: {
+                value: {
+                  content: 'Why use an table?',
+                },
+              },
+              attributes: {
+                'font-size': '13px',
+                padding: '16px 16px 16px 16px',
+              },
+              children: [],
+            },
+            {
+              type: 'table-text',
+              data: {
+                value: {
+                  content:
+                    '<span style="line-height:20px">\n                Because emails with a lot of content are most of the time a very bad experience on mobile, mj-table comes handy when you want to deliver a lot of information in a concise way.\n              </span>',
+                },
+              },
+              attributes: {
+                'font-size': '13px',
+                padding: '16px 16px 16px 16px',
+                'line-height': '1',
+              },
+              children: [],
+            },
+          ],
         },
-      },
+        {
+          type: 'table-element',
+          data: {
+            value: {},
+          },
+          attributes: {
+            'icon-align': 'middle',
+            'icon-height': '32px',
+            'icon-width': '32px',
+            'icon-position': 'right',
+            padding: '10px 25px 10px 25px',
+          },
+          children: [
+            {
+              type: 'table-title',
+              data: {
+                value: {
+                  content: 'How it works',
+                },
+              },
+              attributes: {
+                'font-size': '13px',
+                padding: '16px 16px 16px 16px',
+              },
+              children: [],
+            },
+            {
+              type: 'table-text',
+              data: {
+                value: {
+                  content:
+                    '<span style="line-height:20px">\n                Content is stacked into tabs and users can expand them at will. If responsive styles are not supported (mostly on desktop clients), tabs are then expanded and your content is readable at once.\n              </span>',
+                },
+              },
+              attributes: {
+                'font-size': '13px',
+                padding: '16px 16px 16px 16px',
+                'line-height': '1',
+              },
+              children: [],
+            },
+          ],
+        },
+      ],
     },
   },
 ];

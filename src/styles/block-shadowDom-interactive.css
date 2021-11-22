@@ -9,19 +9,10 @@
 
 .node-type-page {
    min-height: 100%;
-   /* padding-bottom: 100px; */
-   position: relative;
+   position: relative !important;
 }
 .node-type-page * {
    user-select: none;
-}
-
-.body-bg {
-   background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAEklEQVQYlWNgYGD4zzAKBh8AAJYTAQA4FYKbAAAAAElFTkSuQmCC");
-   background-repeat: repeat;
-   position: absolute;
-   overflow: hidden;
-   /* height: 100%; */
 }
 
 :not(.email-block) {
@@ -35,10 +26,22 @@
    cursor: text;
 }
 
-.block-selected,
-.block-hover {
-   /* position: relative; */
+.block-selected {
+   position: relative;
    z-index: 1;
+}
+.block-hover {
+   position: relative;
+   z-index: 1;
+}
+
+.body-bg {
+   background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAEklEQVQYlWNgYGD4zzAKBh8AAJYTAQA4FYKbAAAAAElFTkSuQmCC");
+   background-repeat: repeat;
+   position: absolute !important;
+
+   background-position: center;
+   /* height: 100%; */
 }
 
 .block-dragover {

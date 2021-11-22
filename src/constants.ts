@@ -21,8 +21,10 @@ export enum BasicType {
    CAROUSEL = "carousel",
    NAVBAR = "navbar",
    SOCIAL = "social",
-   // TODO
    TABLE = "table",
+   TABLE_ELEMENT = "tr",
+   TABLE_TITLE = "th",
+   TABLE_TEXT = "td",
 }
 
 export const DRAG_HOVER_CLASSNAME = "block-dragover";
