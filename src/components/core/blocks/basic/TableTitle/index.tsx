@@ -37,5 +37,5 @@ export const TableTitle: IBlock = createBlock({
     };
     return merge(defaultData, payload);
   },
-  validParentType: [BasicType.TABLE],
+  validParentType: [BasicType.TABLE_ELEMENT],
 });

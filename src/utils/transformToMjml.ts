@@ -10,6 +10,7 @@ import { IBlockData } from "@/typings";
 import { pickBy, identity, isObject, isBoolean } from "lodash";
 import { getChildIdx, getNodeIdxClassName, getNodeTypeClassName } from "./block";
 import { classnames } from "./classnames";
+import mustache from "mustache";
 import { ITable } from "@/components/core/blocks/basic/Table";
 
 export type TransformToMjmlOption =
@@ -19,6 +20,7 @@ export type TransformToMjmlOption =
         context: IBlockData;
         mode: "testing";
         preview?: boolean;
+        mergeData?: any;
      }
    | {
         idx?: string | null; // current idx, default page idx
@@ -26,10 +28,12 @@ export type TransformToMjmlOption =
         context: IBlockData;
         mode: "production";
         preview?: boolean;
+        mergeData?: any;
      };
 
 export function transformToMjml(options: TransformToMjmlOption): string {
-   const { data, idx = "content", context = data, mode = "production", preview } = options;
+   const { data, idx = "content", context = data, mode = "production", preview, mergeData } = options;
+
    if ((isBoolean(data?.data?.hidden) && data?.data?.hidden) || data?.data?.hidden === "true") {
       return "";
    }
@@ -58,6 +62,10 @@ export function transformToMjml(options: TransformToMjmlOption): string {
 
    if (data.type === BasicType.WRAPPER) {
       att["css-class"] = classnames(att["css-class"], "body-bg", "body-margins");
+   }
+
+   if (data.type === BasicType.WRAPPER && !isTest) {
+      att["css-class"] = classnames(att["css-class"], "pre-body-margins");
    }
 
    const attributeStr = Object.keys(att)
@@ -105,6 +113,7 @@ export function transformToMjml(options: TransformToMjmlOption): string {
             idx: idx ? getChildIdx(idx, index) : null,
             context,
             mode,
+            mergeData,
          })
       )
       .join("\n");
@@ -129,7 +138,7 @@ export function transformToMjml(options: TransformToMjmlOption): string {
             ? `<mj-raw>
             <meta name="viewport" />
            </mj-raw>
-           <mj-style inline="inline">.mjml-body { width: ${dimension?.width}; { height: ${dimension?.height}; margin: 0px auto; position:"relative" } .body-margins{inset:${marginTop} ${marginRight} ${marginBottom} ${marginLeft}}</mj-style>`
+           <mj-style inline="inline">.mjml-body { width: ${dimension?.width}; { min-height: ${dimension?.height}; margin: 0px auto 10px auto; position:"relative" } .body-margins{inset:${marginTop} ${marginRight} ${marginBottom} ${marginLeft}} .pre-body-margins{padding:${marginTop} ${marginRight} ${marginBottom} ${marginLeft}}</mj-style>`
             : "";
          const styles =
             value.headStyles?.map((style) => `<mj-style ${style.inline ? 'inline="inline"' : ""}>${style.content}</mj-style>`).join("\n") || "";
@@ -242,10 +251,57 @@ export function transformToMjml(options: TransformToMjmlOption): string {
             `;
 
       case BasicType.TABLE_ELEMENT:
-         return `<tr style="${tableAttributeStr}}" ${tableAttributeCls}>
-                  ${children || data.data.value?.content || ""}
-               </tr>
-               `;
+         if (mode === "production") {
+            const checkTag = data.children.reduce(function (a, e, i) {
+               if (e.data.value.content.includes("<%")) a.push(i);
+               return a;
+            }, [] as any);
+
+            console.log(`checkTag`, checkTag);
+
+            ///var customTags = ["<%", "%>"];
+
+            if (checkTag.length > 0) {
+               const result = mergeData?.map((tag, tagIndex) => {
+                  return `<tr style="${tableAttributeStr}}" ${tableAttributeCls}>
+                  ${data.children?.map(
+                     (col, colIndex) =>
+                        `<td style="${tableAttributeStr}" ${tableAttributeCls}> ${JSON.parse(
+                           mustache.render(JSON.stringify(col.data.value.content), mergeData[tagIndex], {}, ["<%", "%>"])
+                        )}
+                     </td>`
+                  )}
+
+
+         </tr>
+        `;
+               });
+               return `
+               <tr style="${tableAttributeStr}}" ${tableAttributeCls}>
+               ${data.children?.map(
+                  (col, colIndex) =>
+                     `<td style="${tableAttributeStr}" ${tableAttributeCls}> ${col.data.value.content.replace(/<%|%>/g, "") || ""}
+                  </td>`
+               )}
+         </tr>
+               ${result}`;
+            } else {
+               return `
+
+         <tr style="${tableAttributeStr}}" ${tableAttributeCls}>
+         ${data.children?.map(
+            (col, colIndex) =>
+               `<td style="${tableAttributeStr}" ${tableAttributeCls}> ${col.data.value.content}
+            </td>`
+         )}
+      </tr>`;
+            }
+         } else {
+            return `<tr style="${tableAttributeStr}}" ${tableAttributeCls}>
+            ${children || data.data.value?.content || ""}
+         </tr>
+         `;
+         }
       case BasicType.TABLE_TITLE:
          return `<th style="${tableAttributeStr}" ${tableAttributeCls}>
                   ${children || data.data.value?.content || ""}

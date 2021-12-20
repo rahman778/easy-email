@@ -1,145 +1,299 @@
-import React, { useCallback, useContext } from 'react';
-import { Padding } from '@/components/EmailEditor/components/ConfigurationPanel/components/AttributesManager/components/Padding';
-import { Stack } from '@/components/UI/Stack';
-import { BackgroundColor } from '@/components/EmailEditor/components/ConfigurationPanel/components/AttributesManager/components/BackgroundColor';
-import { Color } from '@/components/EmailEditor/components/ConfigurationPanel/components/AttributesManager/components/Color';
-import { TextAreaField } from '@/components/core/Form';
-import { FontSize } from '@/components/EmailEditor/components/ConfigurationPanel/components/AttributesManager/components/FontSize';
-import { FontWeight } from '@/components/EmailEditor/components/ConfigurationPanel/components/AttributesManager/components/FontWeight';
-import { FontFamily } from '@/components/EmailEditor/components/ConfigurationPanel/components/AttributesManager/components/FontFamliy';
-import { LineHeight } from '@/components/EmailEditor/components/ConfigurationPanel/components/AttributesManager/components/LineHeight';
+import React, { useCallback, useContext } from "react";
+import { Padding } from "@/components/EmailEditor/components/ConfigurationPanel/components/AttributesManager/components/Padding";
+import { Stack } from "@/components/UI/Stack";
+import { BackgroundColor } from "@/components/EmailEditor/components/ConfigurationPanel/components/AttributesManager/components/BackgroundColor";
+import { Color } from "@/components/EmailEditor/components/ConfigurationPanel/components/AttributesManager/components/Color";
+import { TextAreaField } from "@/components/core/Form";
+import { FontSize } from "@/components/EmailEditor/components/ConfigurationPanel/components/AttributesManager/components/FontSize";
+import { FontWeight } from "@/components/EmailEditor/components/ConfigurationPanel/components/AttributesManager/components/FontWeight";
+import { FontFamily } from "@/components/EmailEditor/components/ConfigurationPanel/components/AttributesManager/components/FontFamliy";
+import { LineHeight } from "@/components/EmailEditor/components/ConfigurationPanel/components/AttributesManager/components/LineHeight";
 
-import { useFocusIdx } from '@/hooks/useFocusIdx';
-import { AttributesPanel } from '@/components/EmailEditor/components/ConfigurationPanel/components/AttributesManager/components/AttributesPanel';
-import { useBlock } from '@/hooks/useBlock';
-import { BasicType,  FIXED_CONTAINER_ID } from '@/constants';
-import { IBlockData, IEmailTemplate } from '@/typings';
-import { TableElement } from '../TableElement';
-import { TableTitle } from '../TableTitle';
-import { TableText } from '.';
-import { getIndexByIdx, getParentIdx} from '@/utils/block';
-
-
+import { useFocusIdx } from "@/hooks/useFocusIdx";
+import { AttributesPanel } from "@/components/EmailEditor/components/ConfigurationPanel/components/AttributesManager/components/AttributesPanel";
+import { useBlock } from "@/hooks/useBlock";
+import { BasicType, BlockType, FIXED_CONTAINER_ID } from "@/constants";
+import { IBlockData, IEmailTemplate } from "@/typings";
+import { getIndexByIdx, getParentIdx, getValueByIdx } from "@/utils/block";
 import { cloneDeep, debounce, get } from "lodash";
-import { message } from "antd";
+import { message, Row, Col } from "antd";
 import { useEditorContext } from "@/hooks/useEditorContext";
-import { BlocksMap } from '@/components/core/blocks';
+import { BlocksMap } from "@/components/core/blocks";
 import { createBlockItem } from "@/utils/createBlockItem";
-import { EditorPropsContext } from '@/components/Provider/PropsProvider';
-import { Button, Tooltip } from 'antd';
-import { IconFont } from '@/components/IconFont';
-import { MergeTags } from '@/components/EmailEditor/components/ConfigurationPanel/components/AttributesManager/components/MergeTags';
+import { EditorPropsContext } from "@/components/Provider/PropsProvider";
+import { Button, Tooltip } from "antd";
+import { IconFont } from "@/components/IconFont";
+import { MergeTags } from "@/components/EmailEditor/components/ConfigurationPanel/components/AttributesManager/components/MergeTags";
+import { PlusCircleOutlined, MinusCircleOutlined } from "@ant-design/icons";
 
-const getPopoverMountNode = () =>
-    document.getElementById(FIXED_CONTAINER_ID)!;
+const getPopoverMountNode = () => document.getElementById(FIXED_CONTAINER_ID)!;
 
 export function Panel() {
-  const { addBlock, moveBlock } = useBlock();
+   const { values, getState, change, batch } = useEditorContext();
+   const { mergeTags } = useContext(EditorPropsContext);
+   const { focusIdx, setFocusIdx } = useFocusIdx();
 
-  const addColumn = () => {
+   const addRow = () => {
+      const parentIdx = getParentIdx(focusIdx)!;
 
-    //const parentIdx = getParentIdx(focusIdx)!;
-    const parentIdx = getParentIdx(focusIdx)!;
+      let tableIdx = getParentIdx(parentIdx)!;
 
-  addBlock({
-    type: BasicType.TABLE_ELEMENT,
-    parentIdx: parentIdx,
-    positionIndex: getIndexByIdx(focusIdx) + 1,
-    payload: {
-      // @ts-ignore
-          children: [
-            TableText.create({
-              data: {
-                value: {
-                  content:
-                    'Content is stacked into tabs and users can expand them at will. If responsive styles are not supported (mostly on desktop clients), tabs are then expanded and your content is readable at once.',
-                },
-              },
-            }),
-          ],
-    },
-  });
+      const parent = get(values, tableIdx || "") as IBlockData | null;
 
-  }
+      let load = {
+         type: BasicType.TABLE_TEXT,
+         data: {
+            value: {
+               content: "Text",
+            },
+         },
+         attributes: {
+            "font-size": "13px",
+            padding: "16px 16px 16px 16px",
+            "line-height": "1",
+            border: "1px solid #d9d9d9",
+         },
+         children: [],
+      };
 
-  // const onAddBlock = () => {
-  //   copyBlock(focusIdx);
-  // }
+      let array = parent?.children[0].children || [];
 
-  const { values, getState, change, batch,  } = useEditorContext();
-  const { mergeTags } = useContext(EditorPropsContext);
-  const { focusIdx, setFocusIdx } = useFocusIdx();
+      let child = array.map((item) => load);
 
-  const copyBlock = useCallback(
-    (idx: string) => {
-       let nextFocusIdx = focusIdx;
-       const values = cloneDeep(getState().values) as IEmailTemplate;
+      addBlock({
+         type: BasicType.TABLE_ELEMENT,
+         parentIdx: tableIdx,
+         positionIndex: getIndexByIdx(focusIdx) + 1,
+         payload: {
+            // @ts-ignore
+            children: child,
+         },
+      });
+   };
 
-       const parentIdx = getParentIdx(idx);
-       if (!parentIdx) return;
-       const parent = get(values, getParentIdx(idx) || "") as IBlockData | null;
-       if (!parent) {
-          message.warning("Invalid block");
-          return;
-       }
-       const copyBlock = cloneDeep(get(values, idx));
-       const index = getIndexByIdx(idx) + 1;
+   const addBlock = useCallback(
+      (params: { type: BlockType; parentIdx: string; positionIndex?: number; payload?: any; canReplace?: boolean }) => {
+         let { type, parentIdx, positionIndex, payload } = params;
+         let nextFocusIdx = focusIdx;
+         const values = cloneDeep(getState().values) as IEmailTemplate;
+         const parent = get(values, parentIdx) as IBlockData | null;
+         if (!parent) {
+            message.warning("Invalid block");
+            return;
+         }
 
-       console.log(`values`, values);
-       console.log(`parentIdx`, parentIdx);
-       console.log(`parent`, parent);
-       console.log(`copyBlock`, copyBlock);
-       console.log(`index`, getIndexByIdx(idx))
-       console.log(`idx`,idx);
+         let child = createBlockItem(type, payload);
 
+         if (typeof positionIndex === "undefined") {
+            positionIndex = parent.children.length;
+         }
+         nextFocusIdx = `${parentIdx}.children.[${positionIndex}]`;
 
-       parent.children.splice(index, 0, copyBlock);
-       change(parentIdx, { ...parent });
-       nextFocusIdx = `${parentIdx}.children.[${index}]`;
+         parent.children.splice(positionIndex, 0, child);
+         change(parentIdx, { ...parent }); // listeners not notified
+         setFocusIdx(nextFocusIdx);
+      },
+      [change, focusIdx, getState, setFocusIdx]
+   );
 
-       setFocusIdx(nextFocusIdx);
-    },
-    [change, focusIdx, getState, setFocusIdx]
- );
+   const addColumn = () => {
+      const parentIdx = getParentIdx(focusIdx)!;
 
- const onMerge = useCallback(
-  (e: any) => {
-    const newVal = e
-    change(`${focusIdx}.data.value.content`, newVal);
-  },
-  [change,focusIdx]
-);
+      let tableIdx = getParentIdx(parentIdx)!;
 
+      addColumnBlock({
+         type: BasicType.TABLE_TEXT,
+         parentIdx: tableIdx,
+         positionIndex: getIndexByIdx(focusIdx) + 1,
+         payload: {
+            // @ts-ignore
+            data: {
+               value: {
+                  content: "Text",
+               },
+            },
+            attributes: {
+               "font-size": "13px",
+               padding: "16px 16px 16px 16px",
+               border: "1px solid #d9d9d9",
+            },
+            children: [],
+         },
+      });
+   };
 
-  return (
-    <AttributesPanel>
-      <Stack vertical>
-      {/* <h1 onClick={() => addColumn()}>sdsdsds</h1> */}
-      {mergeTags && (
-            <Tooltip
-              color='#fff'
-              placement="bottom"
-              title={
-                <MergeTags value="" onChange={(val) => onMerge(val)} />
-              }
-              getPopupContainer={getPopoverMountNode}
-            >
-              <Button size='small' title='Merge tag' icon={<IconFont iconName="icon-merge-tags" />} />
-            </Tooltip>
-          )}
-        <TextAreaField
-          label='Content'
-          name={`${focusIdx}.data.value.content`}
-          inline
-        />
-        <Color />
-        <FontSize />
-        <LineHeight />
-        <FontWeight />
-        <FontFamily />
-        <BackgroundColor />
-        <Padding title='Padding' attributeName='padding' />
-      </Stack>
-    </AttributesPanel>
-  );
+   const addColumnBlock = useCallback(
+      (params: { type: BlockType; parentIdx: string; positionIndex?: number; payload?: any; canReplace?: boolean }) => {
+         let { type, parentIdx, positionIndex, payload } = params;
+         let nextFocusIdx = focusIdx;
+         const values = cloneDeep(getState().values) as IEmailTemplate;
+         const parent = get(values, parentIdx) as IBlockData | null;
+
+         if (!parent) {
+            message.warning("Invalid block");
+            return;
+         }
+
+         let child = createBlockItem(type, payload);
+
+         if (typeof positionIndex === "undefined") {
+            positionIndex = parent.children.length;
+         }
+         nextFocusIdx = `${parentIdx}.children.[${positionIndex}]`;
+
+         parent.children.forEach((item, idx) => {
+            item.children.splice(item.children.length, 0, child);
+         });
+
+         change(parentIdx, { ...parent }); // listeners not notified
+         setFocusIdx(nextFocusIdx);
+      },
+      [change, focusIdx, getState, setFocusIdx]
+   );
+
+   const onMerge = useCallback(
+      (e: any) => {
+         const newVal = e;
+         change(`${focusIdx}.data.value.content`, newVal);
+      },
+      [change, focusIdx]
+   );
+
+   const removeRow = useCallback(
+      (idx: string) => {
+         let nextFocusIdx = focusIdx;
+         const values = cloneDeep(getState().values) as IEmailTemplate;
+
+         const block = getValueByIdx(values, idx);
+         if (!block) {
+            message.warning("Invalid block");
+            return;
+         }
+         const parentIdx = getParentIdx(idx)!;
+         const tableIdx = getParentIdx(parentIdx)!;
+         const parent = get(values, getParentIdx(idx) || "") as IBlockData | null;
+         const table = get(values, tableIdx || "") as IBlockData | null;
+
+         const blockIndex = getIndexByIdx(idx);
+         const parentbockIdex = getIndexByIdx(parentIdx);
+         if (!parentIdx || !parent) {
+            if (block.type === BasicType.PAGE) {
+               message.warning("Page node can not remove");
+               return;
+            }
+            message.warning("Invalid block");
+            return;
+         }
+         if (blockIndex !== parent.children.length - 1) {
+            nextFocusIdx = idx;
+         } else {
+            nextFocusIdx = parentIdx;
+         }
+
+         if (table && table.children.length > 1) {
+            table?.children.splice(table?.children.length - 1, 1);
+            change(tableIdx, { ...table });
+            setFocusIdx(nextFocusIdx);
+         }
+      },
+      [change, focusIdx, getState, setFocusIdx]
+   );
+
+   const removeColumn = useCallback(
+      (idx: string) => {
+         let nextFocusIdx = focusIdx;
+         const values = cloneDeep(getState().values) as IEmailTemplate;
+
+         const block = getValueByIdx(values, idx);
+         if (!block) {
+            message.warning("Invalid block");
+            return;
+         }
+         const parentIdx = getParentIdx(idx)!;
+         const tableIdx = getParentIdx(parentIdx)!;
+         const parent = get(values, getParentIdx(idx) || "") as IBlockData | null;
+         const table = get(values, tableIdx || "") as IBlockData | null;
+
+         const blockIndex = getIndexByIdx(idx);
+         if (!parentIdx || !parent) {
+            if (block.type === BasicType.PAGE) {
+               message.warning("Page node can not remove");
+               return;
+            }
+            message.warning("Invalid block");
+            return;
+         }
+         if (blockIndex !== parent.children.length - 1) {
+            nextFocusIdx = idx;
+         } else {
+            nextFocusIdx = parentIdx;
+         }
+
+         table?.children.forEach((item, idx) => {
+            if (item.children.length > 1) {
+               item.children.splice(item.children.length - 1, 1);
+            }
+         });
+
+         change(tableIdx, { ...table });
+         setFocusIdx(nextFocusIdx);
+      },
+      [change, focusIdx, getState, setFocusIdx]
+   );
+
+   return (
+      <AttributesPanel>
+         <Stack vertical>
+            {/* <Row>
+               <Col span={8}>
+                  <h3>Column</h3>
+               </Col>
+               <Col span={4}>
+                  <h3 onClick={() => removeColumn(focusIdx)}>
+                     <MinusCircleOutlined />
+                  </h3>
+               </Col>
+               <Col span={4}>
+                  <h3 onClick={() => addColumn()}>
+                     <PlusCircleOutlined />
+                  </h3>
+               </Col>
+            </Row>
+            <Row>
+               <Col span={8}>
+                  <h3>Row</h3>
+               </Col>
+               <Col span={4}>
+                  <h3 onClick={() => removeRow(focusIdx)}>
+                     <MinusCircleOutlined />
+                  </h3>
+               </Col>
+               <Col span={4}>
+                  <h3 onClick={() => addRow()}>
+                     <PlusCircleOutlined />
+                  </h3>
+               </Col>
+            </Row> */}
+
+            {mergeTags && (
+               <Tooltip
+                  color="#fff"
+                  placement="bottom"
+                  title={<MergeTags value="" type="table" onChange={(val) => onMerge(val)} table={true} />}
+                  getPopupContainer={getPopoverMountNode}
+               >
+                  <Button size="small" title="Merge tag" icon={<IconFont iconName="icon-merge-tags" />} />
+               </Tooltip>
+            )}
+            <TextAreaField label="Content" name={`${focusIdx}.data.value.content`} inline />
+            <Color />
+            <FontSize />
+            <LineHeight />
+            <FontWeight />
+            <FontFamily />
+            <BackgroundColor />
+            <Padding title="Padding" attributeName="padding" />
+         </Stack>
+      </AttributesPanel>
+   );
 }

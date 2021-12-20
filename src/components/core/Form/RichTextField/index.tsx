@@ -75,7 +75,6 @@ const RichTextFieldItem = (
         style={{
           position: 'fixed',
           ...position,
-          transform: 'translate(0,-100%)',
           padding: '10px 12px',
           boxSizing: 'border-box',
 
