@@ -30,7 +30,6 @@ export function useBlock() {
          let nextFocusIdx = focusIdx;
          const values = cloneDeep(getState().values) as IEmailTemplate;
          const parent = get(values, parentIdx) as IBlockData | null;
-         console.log(`object`, type, parentIdx, positionIndex, payload);
          if (!parent) {
             message.warning("Invalid block");
             return;
@@ -99,11 +98,6 @@ export function useBlock() {
          }
          const copyBlock = cloneDeep(get(values, idx));
          const index = getIndexByIdx(idx) + 1;
-
-         console.log(`values`, values);
-         console.log(`parentIdx`, parentIdx);
-         console.log(`parent`, parent);
-         console.log(`copyBlock`, copyBlock);
 
          parent.children.splice(index, 0, copyBlock);
          change(parentIdx, { ...parent });

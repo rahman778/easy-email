@@ -32,6 +32,7 @@ export interface PropsProviderProps {
    mergeTags?: any;
    mergeData?: any;
    onBeforePreview?: (data: IPage, mergeTags: PropsProviderProps["mergeTags"]) => IPage;
+   onPrint?: (data: IPage) => IPage;
 }
 
 export const EditorPropsContext = React.createContext<PropsProviderProps>({

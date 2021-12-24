@@ -16,9 +16,9 @@ import { DesktopEmailPreview } from "./components/DesktopEmailPreview";
 import { MobileEmailPreview } from "./components/MobileEmailPreview";
 import { EditEmailPreview } from "./components/EditEmailPreview";
 import { BlockLayerManager } from "./components/ConfigurationPanel/components/BlockLayerManager";
-import { IconFont } from "../IconFont";
-import { BlocksPanel } from "./components/BlocksPanel";
+import jsPDF from "jspdf";
 import { ComponentsPanel } from "./components/ComponentsPanel";
+import { useAppSelector } from "@example/hooks/useAppSelector";
 export interface EmailEditorProps {
    height: string | number;
 }
@@ -32,6 +32,9 @@ export const EmailEditor = (props: EmailEditorProps) => {
    const { height: containerHeight } = props;
    const { activeTab, setActiveTab } = useActiveTab();
    const { pageData } = useEditorContext();
+   const dimension = useAppSelector("pageDimension");
+
+   const printRef = React.createRef();
 
    const backgroundColor = pageData.attributes["background-color"];
 
@@ -39,7 +42,25 @@ export const EmailEditor = (props: EmailEditorProps) => {
       return createPortal(<div id={FIXED_CONTAINER_ID} />, document.body);
    }, []);
 
-   const onTogglePanel = () => {};
+   const onPrint = () => {
+      const string = printRef.current as any;
+
+      let pdf = new jsPDF({
+         orientation: "p",
+         unit: "pt",
+         format: [dimension.width, dimension.height],
+         putOnlyUsedFonts: true,
+         precision: 1,
+      });
+
+      pdf.html(string, {
+         autoPaging: true,
+         callback: function (pdf) {
+            //pdf.save("pdf");
+            window.open(pdf.output("bloburl"));
+         },
+      });
+   };
 
    return useMemo(
       () => (
@@ -87,7 +108,7 @@ export const EmailEditor = (props: EmailEditorProps) => {
                      }}
                      className={styles.customScrollBar}
                      style={{ height: "100%", overflow: "auto", borderLeft: "none" }}
-                     defaultActiveKey="Layout"
+                     defaultActiveKey="Blocks"
                   >
                      <TabPane key="Blocks" tab="Blocks" style={{ borderLeft: "none" }}>
                         <ComponentsPanel />
@@ -121,7 +142,7 @@ export const EmailEditor = (props: EmailEditorProps) => {
                               backgroundColor: "#fff",
                            }}
                            onChange={setActiveTab as any}
-                           tabBarExtraContent={<ToolsPanel />}
+                           tabBarExtraContent={<ToolsPanel onPrint={onPrint} activeTab={activeTab} />}
                            centered
                         >
                            <TabPane
@@ -154,20 +175,8 @@ export const EmailEditor = (props: EmailEditorProps) => {
                               style={{ backgroundColor: "#E4E7EA" }}
                            >
                               {/* <EditEmailPreview/> */}
-                              <DesktopEmailPreview />
+                              <DesktopEmailPreview printRef={printRef} />
                            </TabPane>
-                           {/* <TabPane
-                    tab={(
-                      <Stack spacing='none'>
-                        <TabletOutlined />
-                        <TextStyle>Preview</TextStyle>
-                      </Stack>
-                    )}
-                    key={ActiveTabKeys.MOBILE}
-                    style={{ backgroundColor: 'transparent' }}
-                  >
-                    <MobileEmailPreview />
-                  </TabPane> */}
                         </Tabs>
                      </div>
                   </Card>

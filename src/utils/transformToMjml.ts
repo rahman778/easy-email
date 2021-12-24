@@ -12,6 +12,7 @@ import { getChildIdx, getNodeIdxClassName, getNodeTypeClassName } from "./block"
 import { classnames } from "./classnames";
 import mustache from "mustache";
 import { ITable } from "@/components/core/blocks/basic/Table";
+import { useAppSelector } from "@example/hooks/useAppSelector";
 
 export type TransformToMjmlOption =
    | {
@@ -21,6 +22,7 @@ export type TransformToMjmlOption =
         mode: "testing";
         preview?: boolean;
         mergeData?: any;
+        dimension?: any;
      }
    | {
         idx?: string | null; // current idx, default page idx
@@ -29,10 +31,11 @@ export type TransformToMjmlOption =
         mode: "production";
         preview?: boolean;
         mergeData?: any;
+        dimension?: any;
      };
 
 export function transformToMjml(options: TransformToMjmlOption): string {
-   const { data, idx = "content", context = data, mode = "production", preview, mergeData } = options;
+   const { data, idx = "content", context = data, mode = "production", preview, mergeData, dimension } = options;
 
    if ((isBoolean(data?.data?.hidden) && data?.data?.hidden) || data?.data?.hidden === "true") {
       return "";
@@ -114,16 +117,10 @@ export function transformToMjml(options: TransformToMjmlOption): string {
             context,
             mode,
             mergeData,
+            dimension,
          })
       )
       .join("\n");
-
-   let dimension = { width: "200px", height: "200px" };
-   if (data.attributes.pageSize === "A4") {
-      dimension = { width: "500px", height: "600px" };
-   } else if (data.attributes.pageSize === "letter") {
-      dimension = { width: "600px", height: "800px" };
-   }
 
    const { marginTop, marginBottom, marginLeft, marginRight } = data.attributes;
 
@@ -138,7 +135,7 @@ export function transformToMjml(options: TransformToMjmlOption): string {
             ? `<mj-raw>
             <meta name="viewport" />
            </mj-raw>
-           <mj-style inline="inline">.mjml-body { width: ${dimension?.width}; { min-height: ${dimension?.height}; margin: 0px auto 10px auto; position:"relative" } .body-margins{inset:${marginTop} ${marginRight} ${marginBottom} ${marginLeft}} .pre-body-margins{padding:${marginTop} ${marginRight} ${marginBottom} ${marginLeft}}</mj-style>`
+           <mj-style inline="inline">.mjml-body { width: ${dimension?.width}px; { min-height: ${dimension?.height}px; margin: 0px auto 0px auto; position:"relative" } .body-margins{inset:${marginTop} ${marginRight} ${marginBottom} ${marginLeft}} .pre-body-margins{padding:${marginTop} ${marginRight} ${marginBottom} ${marginLeft}}</mj-style>`
             : "";
          const styles =
             value.headStyles?.map((style) => `<mj-style ${style.inline ? 'inline="inline"' : ""}>${style.content}</mj-style>`).join("\n") || "";
@@ -166,7 +163,7 @@ export function transformToMjml(options: TransformToMjmlOption): string {
               ${value.fonts?.filter(Boolean).map((item) => `<mj-font name="${item.name}" href="${item.href}" />`)}
             </mj-attributes>
           </mj-head>
-          <mj-body  ${attributeStr}>
+          <mj-body  ${attributeStr} >
             ${children}
           </mj-body>
         </mjml>
@@ -256,8 +253,6 @@ export function transformToMjml(options: TransformToMjmlOption): string {
                if (e.data.value.content.includes("<%")) a.push(i);
                return a;
             }, [] as any);
-
-            console.log(`checkTag`, checkTag);
 
             ///var customTags = ["<%", "%>"];
 

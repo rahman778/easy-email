@@ -5,6 +5,7 @@ import mjml from "mjml-browser";
 import { useEditorContext } from "@/hooks/useEditorContext";
 import { EditorPropsContext } from "@/components/Provider/PropsProvider";
 import { cloneDeep } from "lodash";
+import { useAppSelector } from "@example/hooks/useAppSelector";
 
 export function PreviewEmail(props) {
    const { index, data, scroll } = props;
@@ -12,16 +13,10 @@ export function PreviewEmail(props) {
    const { onBeforePreview, mergeTags, mergeData } = useContext(EditorPropsContext);
    const [errMsg, setErrMsg] = useState("");
    const [html, setHtml] = useState("");
-
-   // function findNested(arr, id) {
-   //    let found = arr.filter((node) => node.type === id);
-   //    return found.length > 0 ? found : arr.some((c) => findNested(c.children, id));
-   // }
+   const dimension = useAppSelector("pageDimension");
 
    useEffect(() => {
       let injectData = pageData;
-
-      // console.log(findNested(pageData.children, "table"));
 
       if (onBeforePreview) {
          try {
@@ -39,6 +34,7 @@ export function PreviewEmail(props) {
             context: injectData,
             preview: true,
             mergeData: mergeData,
+            dimension: dimension,
          })
       ).html;
       setHtml(parseHtml);

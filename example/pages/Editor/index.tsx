@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-wrap-multilines */
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import template from "@example/store/template";
 import { useAppSelector } from "@example/hooks/useAppSelector";
@@ -166,8 +166,6 @@ export default function Editor() {
    }, [templateData]);
 
    const onBeforePreview: EmailEditorProviderProps["onBeforePreview"] = useCallback((data, mergeTags) => {
-      console.log(`mergeTags`, mergeTags);
-
       return JSON.parse(mustache.render(JSON.stringify(data), mergeTags));
    }, []);
 
