@@ -8,16 +8,13 @@ import { useEditorContext } from "@/hooks/useEditorContext";
 import { HtmlStringToReactNodes } from "@/utils/HtmlStringToReactNodes";
 import { createPortal } from "react-dom";
 import { EditorPropsContext } from "@/components/Provider/PropsProvider";
-import { useAppSelector } from "@example/hooks/useAppSelector";
 
 export function MjmlDomRender() {
    const { pageData: content } = useEditorContext();
    const [pageData, setPageData] = useState<IPage | null>(null);
    const [ref, setRef] = useState<HTMLDivElement | null>(null);
-   const { dashed } = useContext(EditorPropsContext);
+   const { dashed, selectedFormat: dimension } = useContext(EditorPropsContext);
    const pageMaxWidth = content.attributes.width || "600px";
-
-   const dimension = useAppSelector("pageDimension");
 
    useEffect(() => {
       if (!isEqual(content, pageData)) {

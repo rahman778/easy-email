@@ -11,9 +11,6 @@ import { pickBy, identity, isObject, isBoolean } from "lodash";
 import { getChildIdx, getNodeIdxClassName, getNodeTypeClassName } from "./block";
 import { classnames } from "./classnames";
 import mustache from "mustache";
-import { ITable } from "@/components/core/blocks/basic/Table";
-import { useAppSelector } from "@example/hooks/useAppSelector";
-
 export type TransformToMjmlOption =
    | {
         data: IBlockData;

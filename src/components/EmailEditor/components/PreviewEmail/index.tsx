@@ -5,15 +5,13 @@ import mjml from "mjml-browser";
 import { useEditorContext } from "@/hooks/useEditorContext";
 import { EditorPropsContext } from "@/components/Provider/PropsProvider";
 import { cloneDeep } from "lodash";
-import { useAppSelector } from "@example/hooks/useAppSelector";
 
 export function PreviewEmail(props) {
    const { index, data, scroll } = props;
    const { pageData } = useEditorContext();
-   const { onBeforePreview, mergeTags, mergeData } = useContext(EditorPropsContext);
+   const { onBeforePreview, mergeTags, mergeData, selectedFormat: dimension } = useContext(EditorPropsContext);
    const [errMsg, setErrMsg] = useState("");
    const [html, setHtml] = useState("");
-   const dimension = useAppSelector("pageDimension");
 
    useEffect(() => {
       let injectData = pageData;

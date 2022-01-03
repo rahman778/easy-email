@@ -222,6 +222,19 @@ export default function Editor() {
       );
    }
 
+   const [selectedFormat, setSelectedFormat] = useState("A4");
+
+   const pageDimesions = useMemo(() => {
+      switch (selectedFormat) {
+         case "A4":
+            return { width: 595, height: 842 };
+         case "Letter":
+            return { width: 612, height: 792 };
+         default:
+            return { width: 595, height: 842 };
+      }
+   }, [selectedFormat]);
+
    if (!initialValues) return null;
 
    return (
@@ -244,6 +257,9 @@ export default function Editor() {
             mergeTags={result?.data[0]}
             mergeData={result?.data}
             onBeforePreview={onBeforePreview}
+            selectedFormat={pageDimesions}
+            setSelectedFormat={setSelectedFormat}
+            parameters={<DummyComponent />}
          >
             {({ values }, { submit }) => {
                return (
@@ -282,3 +298,7 @@ export default function Editor() {
       </div>
    );
 }
+
+const DummyComponent = () => {
+   return <h2>Index</h2>;
+};

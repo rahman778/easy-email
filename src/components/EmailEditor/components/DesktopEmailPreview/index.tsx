@@ -4,8 +4,7 @@ import { useDomScrollHeight } from "@/hooks/useDomScrollHeight";
 import { useActiveTab } from "@/hooks/useActiveTab";
 import { PreviewEmail } from "../PreviewEmail";
 import { EditorPropsContext } from "@/components/Provider/PropsProvider";
-import { useAppSelector } from "@example/hooks/useAppSelector";
-import { useEditorContext } from "easy-email-editor";
+import { useEditorContext } from "@/hooks/useEditorContext";
 
 export function DesktopEmailPreview({ printRef }) {
    const { pageData } = useEditorContext();
@@ -14,11 +13,9 @@ export function DesktopEmailPreview({ printRef }) {
 
    const [isTagIcluded, setIsTagIcluded] = useState(false);
 
-   const { mergeData } = useContext(EditorPropsContext);
+   const { mergeData, selectedFormat: dimension } = useContext(EditorPropsContext);
 
    const [ref, setRef] = useState<HTMLDivElement | null>(null);
-
-   const dimension = useAppSelector("pageDimension");
 
    useEffect(() => {
       const container = ref;

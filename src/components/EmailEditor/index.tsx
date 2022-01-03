@@ -18,7 +18,7 @@ import { EditEmailPreview } from "./components/EditEmailPreview";
 import { BlockLayerManager } from "./components/ConfigurationPanel/components/BlockLayerManager";
 import jsPDF from "jspdf";
 import { ComponentsPanel } from "./components/ComponentsPanel";
-import { useAppSelector } from "@example/hooks/useAppSelector";
+import { EditorPropsContext } from "../Provider/PropsProvider";
 export interface EmailEditorProps {
    height: string | number;
 }
@@ -32,7 +32,9 @@ export const EmailEditor = (props: EmailEditorProps) => {
    const { height: containerHeight } = props;
    const { activeTab, setActiveTab } = useActiveTab();
    const { pageData } = useEditorContext();
-   const dimension = useAppSelector("pageDimension");
+   const { selectedFormat: dimension, parameters } = useContext(EditorPropsContext);
+
+   console.log(`parameters`, parameters);
 
    const printRef = React.createRef();
 
@@ -115,6 +117,9 @@ export const EmailEditor = (props: EmailEditorProps) => {
                      </TabPane>
                      <TabPane key="Layout" tab="Layout">
                         <BlockLayerManager />
+                     </TabPane>
+                     <TabPane key="Parameters" tab="Parameters">
+                        {parameters}
                      </TabPane>
                   </Tabs>
                </Layout.Sider>

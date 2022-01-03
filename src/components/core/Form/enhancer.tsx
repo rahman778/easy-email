@@ -1,12 +1,11 @@
 import { TextStyle } from "@/components/UI/TextStyle";
 import { Form } from "antd";
 import { FieldProps, useField, useForm } from "react-final-form";
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useContext, useMemo } from "react";
 import { Stack, StackProps } from "../../UI/Stack";
 import styles from "./index.module.scss";
 import { InputProps } from "./Input";
-import { useDispatch } from "react-redux";
-import pageData from "@example/store/pageData";
+import { EditorPropsContext } from "@/components/Provider/PropsProvider";
 
 export interface EnhancerProps<T> extends Partial<FieldProps<T, any>> {
    name: string;
@@ -48,7 +47,7 @@ export default function enhancer<P>(Component: any, changeAdapter: (e: any) => a
          return `enhancer-${primaryId++}`;
       }, []);
       const { change, mutators } = useForm();
-      const dispatch = useDispatch();
+      const { setSelectedFormat } = useContext(EditorPropsContext);
       const {
          input: { value, onBlur },
          meta: { touched, error },
@@ -61,7 +60,7 @@ export default function enhancer<P>(Component: any, changeAdapter: (e: any) => a
             const newVal = onChangeAdapter ? onChangeAdapter(changeAdapter(e)) : changeAdapter(e);
             change(name, newVal);
             if (pageSelect) {
-               dispatch(pageData.actions.add(newVal));
+               setSelectedFormat(newVal);
             }
             onBlur();
          },
