@@ -1,6 +1,6 @@
-import { DesktopOutlined, TabletOutlined, EditOutlined } from "@ant-design/icons";
-import { Card, Layout, Tabs, Popover } from "antd";
-import React, { useMemo, useContext } from "react";
+import { DesktopOutlined, EditOutlined } from "@ant-design/icons";
+import { Card, Layout, Tabs } from "antd";
+import React, { useMemo, useContext, useEffect } from "react";
 import { ConfigurationPanel } from "./components/ConfigurationPanel";
 import { Stack } from "../UI/Stack";
 import { TextStyle } from "../UI/TextStyle";
@@ -13,7 +13,6 @@ import { FIXED_CONTAINER_ID } from "@/constants";
 import { useActiveTab } from "@/hooks/useActiveTab";
 import { ActiveTabKeys } from "../Provider/BlocksProvider";
 import { DesktopEmailPreview } from "./components/DesktopEmailPreview";
-import { MobileEmailPreview } from "./components/MobileEmailPreview";
 import { EditEmailPreview } from "./components/EditEmailPreview";
 import { BlockLayerManager } from "./components/ConfigurationPanel/components/BlockLayerManager";
 import jsPDF from "jspdf";
@@ -21,6 +20,8 @@ import { ComponentsPanel } from "./components/ComponentsPanel";
 import { EditorPropsContext } from "../Provider/PropsProvider";
 export interface EmailEditorProps {
    height: string | number;
+   parameters?: any;
+   editable?: boolean;
 }
 
 //
@@ -29,12 +30,10 @@ export interface EmailEditorProps {
 const TabPane = Tabs.TabPane;
 
 export const EmailEditor = (props: EmailEditorProps) => {
-   const { height: containerHeight } = props;
+   const { height: containerHeight, parameters, editable } = props;
    const { activeTab, setActiveTab } = useActiveTab();
    const { pageData } = useEditorContext();
-   const { selectedFormat: dimension, parameters } = useContext(EditorPropsContext);
-
-   console.log(`parameters`, parameters);
+   const { selectedFormat: dimension } = useContext(EditorPropsContext);
 
    const printRef = React.createRef();
 
@@ -43,6 +42,14 @@ export const EmailEditor = (props: EmailEditorProps) => {
    const fixedContainer = useMemo(() => {
       return createPortal(<div id={FIXED_CONTAINER_ID} />, document.body);
    }, []);
+
+   useEffect(() => {
+      if (editable) {
+         setActiveTab(ActiveTabKeys.EDIT);
+      } else {
+         setActiveTab(ActiveTabKeys.PC);
+      }
+   }, [editable]);
 
    const onPrint = () => {
       const string = printRef.current as any;
@@ -74,33 +81,6 @@ export const EmailEditor = (props: EmailEditorProps) => {
                   overflow: "hidden",
                }}
             >
-               {/* <Layout.Sider
-            theme='light'
-            width={60}
-            style={{ border: '1px solid #f0f0f0' }}
-          >
-            <Stack vertical alignment='center' distribution='center'>
-              <Stack.Item />
-              <BlocksPanel>
-                <IconFont
-                  onClick={onTogglePanel}
-                  iconName='icon-add'
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: '#000',
-                    width: 36,
-                    height: 36,
-                    borderRadius: '50%',
-                    boxShadow:
-                      '0 0 12px -3px rgb(0 0 0 / 20%), 0 2px 7px -1px rgb(0 0 0 / 14%), 0 2px 4px -1px rgb(0 0 0 / 20%)',
-                    fontSize: 20,
-                  }}
-                />
-              </BlocksPanel>
-            </Stack>
-          </Layout.Sider> */}
                <Layout.Sider style={{ height: containerHeight, borderLeft: "none" }} theme="light" width={300}>
                   <Tabs
                      tabBarStyle={{
@@ -110,7 +90,7 @@ export const EmailEditor = (props: EmailEditorProps) => {
                      }}
                      className={styles.customScrollBar}
                      style={{ height: "100%", overflow: "auto", borderLeft: "none" }}
-                     defaultActiveKey="Blocks"
+                     defaultActiveKey={"Blocks"}
                   >
                      <TabPane key="Blocks" tab="Blocks" style={{ borderLeft: "none" }}>
                         <ComponentsPanel />
@@ -118,7 +98,7 @@ export const EmailEditor = (props: EmailEditorProps) => {
                      <TabPane key="Layout" tab="Layout">
                         <BlockLayerManager />
                      </TabPane>
-                     <TabPane key="Parameters" tab="Parameters">
+                     <TabPane key="Inputs" tab="Inputs">
                         {parameters}
                      </TabPane>
                   </Tabs>
@@ -158,6 +138,7 @@ export const EmailEditor = (props: EmailEditorProps) => {
                                  </Stack>
                               }
                               key={ActiveTabKeys.EDIT}
+                              disabled={!editable}
                            >
                               <div
                                  style={{

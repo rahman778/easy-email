@@ -53,6 +53,7 @@ export default function Editor() {
    const templateData = useAppSelector("template");
    const { addCollection, removeCollection, collectionCategory } = useCollection();
    const { openModal, modal } = useEmailModal();
+   const [editable, setEditable] = useState(false);
    const { id, userId } = useQuery();
    const loading = useLoading(template.loadings.fetchById);
 
@@ -259,7 +260,6 @@ export default function Editor() {
             onBeforePreview={onBeforePreview}
             selectedFormat={pageDimesions}
             setSelectedFormat={setSelectedFormat}
-            parameters={<DummyComponent />}
          >
             {({ values }, { submit }) => {
                return (
@@ -288,7 +288,7 @@ export default function Editor() {
                            </Stack>
                         }
                      />
-                     <EmailEditor height={"calc(100vh - 85px)"} />
+                     <EmailEditor height={"calc(100vh - 85px)"} editable={editable} parameters={<DummyComponent />} />
                      <AutoSaveAndRestoreEmail />
                   </>
                );

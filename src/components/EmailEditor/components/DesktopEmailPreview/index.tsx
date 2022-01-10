@@ -58,7 +58,7 @@ export function DesktopEmailPreview({ printRef }) {
                style={{
                   height: "100%",
                   overflow: "auto",
-                  padding: "40px 0px",
+                  padding: "20px 0px",
                   margin: "auto",
                   boxSizing: "border-box",
                }}

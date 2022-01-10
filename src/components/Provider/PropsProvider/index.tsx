@@ -35,7 +35,6 @@ export interface PropsProviderProps {
    onPrint?: (data: IPage) => IPage;
    selectedFormat?: any;
    setSelectedFormat?: any;
-   parameters?: any;
 }
 
 export const EditorPropsContext = React.createContext<PropsProviderProps>({
