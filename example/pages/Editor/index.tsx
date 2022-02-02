@@ -53,7 +53,7 @@ export default function Editor() {
    const templateData = useAppSelector("template");
    const { addCollection, removeCollection, collectionCategory } = useCollection();
    const { openModal, modal } = useEmailModal();
-   const [editable, setEditable] = useState(false);
+   const [editable, setEditable] = useState(true);
    const { id, userId } = useQuery();
    const loading = useLoading(template.loadings.fetchById);
 
@@ -258,7 +258,7 @@ export default function Editor() {
             mergeTags={result?.data[0]}
             mergeData={result?.data}
             onBeforePreview={onBeforePreview}
-            selectedFormat={pageDimesions}
+            //selectedFormat={pageDimesions}
             setSelectedFormat={setSelectedFormat}
          >
             {({ values }, { submit }) => {
