@@ -5,11 +5,13 @@ import mjml from "mjml-browser";
 import { useEditorContext } from "@/hooks/useEditorContext";
 import { EditorPropsContext } from "@/components/Provider/PropsProvider";
 import { cloneDeep } from "lodash";
+import { usePageFormat } from "@/hooks/usePageFormat";
 
 export function PreviewEmail(props) {
    const { index, data, scroll } = props;
    const { pageData } = useEditorContext();
-   const { onBeforePreview, mergeTags, mergeData, selectedFormat: dimension } = useContext(EditorPropsContext);
+   const { onBeforePreview, mergeTags, mergeData } = useContext(EditorPropsContext);
+   const { pageDimesions: dimension } = usePageFormat();
    const [errMsg, setErrMsg] = useState("");
    const [html, setHtml] = useState("");
 
@@ -25,6 +27,9 @@ export function PreviewEmail(props) {
             setErrMsg(error?.message || error);
          }
       }
+
+      console.log("injectDataP", injectData);
+
       const parseHtml = mjml(
          transformToMjml({
             data: injectData,
@@ -36,7 +41,9 @@ export function PreviewEmail(props) {
          })
       ).html;
       setHtml(parseHtml);
-   }, [mergeTags, onBeforePreview, pageData, mergeData]);
+   }, [mergeTags, onBeforePreview, pageData, mergeData, dimension]);
+
+   console.log("mergeDataP", mergeData);
 
    if (errMsg) {
       return <div style={{ textAlign: "center", fontSize: 24, color: "red" }}>{errMsg}</div>;

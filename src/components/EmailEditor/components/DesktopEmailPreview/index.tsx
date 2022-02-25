@@ -5,6 +5,7 @@ import { useActiveTab } from "@/hooks/useActiveTab";
 import { PreviewEmail } from "../PreviewEmail";
 import { EditorPropsContext } from "@/components/Provider/PropsProvider";
 import { useEditorContext } from "@/hooks/useEditorContext";
+import { usePageFormat } from "@/hooks/usePageFormat";
 
 export function DesktopEmailPreview({ printRef }) {
    const { pageData } = useEditorContext();
@@ -13,7 +14,8 @@ export function DesktopEmailPreview({ printRef }) {
 
    const [isTagIcluded, setIsTagIcluded] = useState(false);
 
-   const { mergeData, selectedFormat: dimension } = useContext(EditorPropsContext);
+   const { mergeData } = useContext(EditorPropsContext);
+   const { pageDimesions: dimension } = usePageFormat();
 
    const [ref, setRef] = useState<HTMLDivElement | null>(null);
 
@@ -32,8 +34,12 @@ export function DesktopEmailPreview({ printRef }) {
 
    const findItemNested = (arr, itemId, nestingKey) =>
       arr.reduce((a, item) => {
+         let words = item.data.value?.content?.split("{{PAGE_");
+         let isParamsIncluded = words?.find((a) => a.includes("{{"));
+         //let isPageIncluded = item.data.value?.content?.includes("{{PAGE_");
+
          if (a) return a;
-         if (item.data.value?.content?.includes("{{")) return true;
+         if (isParamsIncluded) return true;
          if (item["children"]) return findItemNested(item["children"], itemId, nestingKey);
       }, false);
 
@@ -65,9 +71,14 @@ export function DesktopEmailPreview({ printRef }) {
             >
                <div ref={printRef} style={{ width: dimension.width }}>
                   {isTagIcluded ? (
-                     mergeData?.map((data, index) => <PreviewEmail scroll index={index} data={data} />)
+                     mergeData?.map((data, index) => {
+                        const obj = Object.assign({}, data);
+                        obj["PAGE_NUMBER"] = index + 1;
+                        obj["PAGE_COUNT"] = mergeData?.length;
+                        return <PreviewEmail scroll index={index} data={obj} />;
+                     })
                   ) : (
-                     <PreviewEmail scroll index={0} data={[]} />
+                     <PreviewEmail scroll index={0} data={mergeData && mergeData[0]} />
                   )}
                </div>
             </div>

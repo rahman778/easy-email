@@ -54,6 +54,7 @@ export default function Editor() {
    const { addCollection, removeCollection, collectionCategory } = useCollection();
    const { openModal, modal } = useEmailModal();
    const [editable, setEditable] = useState(true);
+   const [mergeTags, setMergeTags] = useState({});
    const { id, userId } = useQuery();
    const loading = useLoading(template.loadings.fetchById);
 
@@ -81,34 +82,6 @@ export default function Editor() {
          dispatch(template.actions.set(null));
       };
    }, [dispatch, id, userId]);
-
-   const mergeTags = useMemo(() => {
-      return {
-         user: {
-            id: "001",
-         },
-         company: {
-            name: "BCH",
-            street: "Castle street",
-            city: "New york",
-         },
-         date: {
-            today: () => new Date().toDateString(),
-         },
-         recipent: {
-            company: "ADS",
-            first_name: "john",
-            last_name: "Doe",
-            zip: "6005",
-         },
-         invoice: {
-            description: "some desc",
-            quantity: "10",
-            unit_price: "$20",
-            amount: "$200",
-         },
-      };
-   }, []);
 
    const onSubmit = useCallback(
       async (values: IEmailTemplate, form: FormApi<IEmailTemplate, Partial<IEmailTemplate>>) => {
@@ -215,6 +188,49 @@ export default function Editor() {
       ],
    };
 
+   useEffect(() => {
+      if (result.data) {
+         setMergeTags({
+            ...result?.data[0],
+            PAGE_NUMBER: 1,
+            PAGE_COUNT: 1,
+         });
+      }
+   }, []);
+
+   const mergeData = useMemo(() => {
+      // converts seconds into time
+      if (result.data) {
+         let assignedData = result?.data.map((rslt, index) => {
+            ///let objs = {};
+            ///const DATE = dayjs().format("YYYY-MM-DD");
+            //const TIME = dayjs().format("HH:mm");
+            //const CURRENT_USER_ID = profile?.id;
+            //const CURRENT_USER_NAME = profile?.username;
+            const PAGE_NUMBER = 1;
+            const PAGE_COUNT = 1;
+            const objs = Object.assign({}, rslt, { PAGE_NUMBER, PAGE_COUNT });
+
+            return objs;
+         });
+
+         // if (exists) {
+         //     const newData = result?.data.map((rslt) => {
+         //         const obj = Object.assign({}, rslt);
+         //         obj["dttm"] = dayjs(rslt.dttm).format(
+         //             "YYYY-MM-DD HH:mm:ss"
+         //         );
+         //         return obj;
+         //     });
+
+         //     return newData;
+         // } else {
+         return assignedData;
+      }
+   }, [result]);
+
+   console.log("mergDeata", mergeData);
+
    if (!templateData && loading) {
       return (
          <Loading loading={loading}>
@@ -222,19 +238,6 @@ export default function Editor() {
          </Loading>
       );
    }
-
-   const [selectedFormat, setSelectedFormat] = useState("A4");
-
-   const pageDimesions = useMemo(() => {
-      switch (selectedFormat) {
-         case "A4":
-            return { width: 595, height: 842 };
-         case "Letter":
-            return { width: 612, height: 792 };
-         default:
-            return { width: 595, height: 842 };
-      }
-   }, [selectedFormat]);
 
    if (!initialValues) return null;
 
@@ -255,11 +258,11 @@ export default function Editor() {
             onSubmit={onSubmit}
             autoComplete
             dashed={false}
-            mergeTags={result?.data[0]}
-            mergeData={result?.data}
+            mergeTags={mergeTags}
+            mergeData={mergeData}
             onBeforePreview={onBeforePreview}
             //selectedFormat={pageDimesions}
-            setSelectedFormat={setSelectedFormat}
+            //setSelectedFormat={setSelectedFormat}
          >
             {({ values }, { submit }) => {
                return (

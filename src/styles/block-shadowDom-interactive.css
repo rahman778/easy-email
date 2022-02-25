@@ -52,6 +52,7 @@
 .block-selected .email-block,
 .block-hover .email-block {
    z-index: 2;
+   max-width: unset !important;
 }
 
 .block-dragover .email-block {

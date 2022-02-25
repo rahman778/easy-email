@@ -48,7 +48,7 @@ export const MergeTags: React.FC<{ onChange: (v: string) => void; value: string;
                   onSelect={(val) => onSelect(val)}
                />
             ) : (
-               <Tree style={{ width: 120 }} selectedKeys={[]} treeData={treeOptions} onSelect={(vals: any[]) => onSelect(vals[0])} />
+               <Tree style={{ maxWidth: 225 }} selectedKeys={[]} treeData={treeOptions} onSelect={(vals: any[]) => onSelect(vals[0])} />
             )}
          </div>
       );

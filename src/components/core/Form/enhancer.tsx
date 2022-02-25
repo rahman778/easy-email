@@ -5,7 +5,7 @@ import React, { useCallback, useContext, useMemo } from "react";
 import { Stack, StackProps } from "../../UI/Stack";
 import styles from "./index.module.scss";
 import { InputProps } from "./Input";
-import { EditorPropsContext } from "@/components/Provider/PropsProvider";
+import { usePageFormat } from "@/hooks/usePageFormat";
 
 export interface EnhancerProps<T> extends Partial<FieldProps<T, any>> {
    name: string;
@@ -47,7 +47,7 @@ export default function enhancer<P>(Component: any, changeAdapter: (e: any) => a
          return `enhancer-${primaryId++}`;
       }, []);
       const { change, mutators } = useForm();
-      const { setSelectedFormat } = useContext(EditorPropsContext);
+      const { setPageFormat } = usePageFormat();
       const {
          input: { value, onBlur },
          meta: { touched, error },
@@ -60,7 +60,7 @@ export default function enhancer<P>(Component: any, changeAdapter: (e: any) => a
             const newVal = onChangeAdapter ? onChangeAdapter(changeAdapter(e)) : changeAdapter(e);
             change(name, newVal);
             if (pageSelect) {
-               setSelectedFormat(newVal);
+               setPageFormat(newVal);
             }
             onBlur();
          },

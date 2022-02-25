@@ -18,6 +18,7 @@ import { BlockLayerManager } from "./components/ConfigurationPanel/components/Bl
 import jsPDF from "jspdf";
 import { ComponentsPanel } from "./components/ComponentsPanel";
 import { EditorPropsContext } from "../Provider/PropsProvider";
+import { usePageFormat } from "@/hooks/usePageFormat";
 export interface EmailEditorProps {
    height: string | number;
    parameters?: any;
@@ -33,7 +34,7 @@ export const EmailEditor = (props: EmailEditorProps) => {
    const { height: containerHeight, parameters, editable } = props;
    const { activeTab, setActiveTab } = useActiveTab();
    const { pageData } = useEditorContext();
-   const { selectedFormat: dimension } = useContext(EditorPropsContext);
+   const { pageDimesions: dimension } = usePageFormat();
 
    const printRef = React.createRef();
 
@@ -77,34 +78,37 @@ export const EmailEditor = (props: EmailEditorProps) => {
             <div
                style={{
                   display: "flex",
-                  width: "100vw",
+                  width: editable ? "100vw" : "calc(100vw - 650px)",
                   overflow: "hidden",
+                  margin: "auto",
                }}
             >
-               <Layout.Sider style={{ height: containerHeight, borderLeft: "none" }} theme="light" width={300}>
-                  <Tabs
-                     tabBarStyle={{
-                        paddingLeft: 20,
-                        marginBottom: 0,
-                        backgroundColor: "#fff",
-                     }}
-                     className={styles.customScrollBar}
-                     style={{ height: "100%", overflow: "auto", borderLeft: "none" }}
-                     defaultActiveKey={"Blocks"}
-                  >
-                     <TabPane key="Blocks" tab="Blocks" style={{ borderLeft: "none" }}>
-                        <ComponentsPanel />
-                     </TabPane>
-                     <TabPane key="Layout" tab="Layout">
-                        <BlockLayerManager />
-                     </TabPane>
-                     <TabPane key="Inputs" tab="Inputs">
-                        {parameters}
-                     </TabPane>
-                  </Tabs>
-               </Layout.Sider>
+               {editable && (
+                  <Layout.Sider style={{ height: containerHeight, borderLeft: "none" }} theme="light" width={300}>
+                     <Tabs
+                        tabBarStyle={{
+                           paddingLeft: 20,
+                           marginBottom: 0,
+                           backgroundColor: "#fff",
+                        }}
+                        className={styles.customScrollBar}
+                        style={{ height: "100%", overflow: "auto", borderLeft: "none" }}
+                        defaultActiveKey={"Blocks"}
+                     >
+                        <TabPane key="Blocks" tab="Blocks" style={{ borderLeft: "none" }}>
+                           <ComponentsPanel />
+                        </TabPane>
+                        <TabPane key="Layout" tab="Layout">
+                           <BlockLayerManager />
+                        </TabPane>
+                        <TabPane key="Inputs" tab="Inputs">
+                           {parameters}
+                        </TabPane>
+                     </Tabs>
+                  </Layout.Sider>
+               )}
 
-               <Layout style={{ height: containerHeight }}>
+               <Layout style={{ height: containerHeight, maxWidth: "calc(100vw - 650px)" }}>
                   <Card
                      bodyStyle={{
                         backgroundColor: backgroundColor,
@@ -168,20 +172,22 @@ export const EmailEditor = (props: EmailEditorProps) => {
                   </Card>
                </Layout>
 
-               <Layout.Sider style={{ height: containerHeight }} theme="light" width={350}>
-                  <Card
-                     size="small"
-                     id="rightSide"
-                     style={{
-                        maxHeight: "100%",
-                        height: "100%",
-                     }}
-                     bodyStyle={{ padding: 0 }}
-                     className={styles.customScrollBar}
-                  >
-                     <ConfigurationPanel />
-                  </Card>
-               </Layout.Sider>
+               {editable && (
+                  <Layout.Sider style={{ height: containerHeight }} theme="light" width={350}>
+                     <Card
+                        size="small"
+                        id="rightSide"
+                        style={{
+                           maxHeight: "100%",
+                           height: "100%",
+                        }}
+                        bodyStyle={{ padding: 0 }}
+                        className={styles.customScrollBar}
+                     >
+                        <ConfigurationPanel />
+                     </Card>
+                  </Layout.Sider>
+               )}
             </div>
 
             {fixedContainer}

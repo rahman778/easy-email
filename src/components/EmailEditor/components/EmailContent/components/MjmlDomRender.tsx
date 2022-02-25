@@ -8,12 +8,14 @@ import { useEditorContext } from "@/hooks/useEditorContext";
 import { HtmlStringToReactNodes } from "@/utils/HtmlStringToReactNodes";
 import { createPortal } from "react-dom";
 import { EditorPropsContext } from "@/components/Provider/PropsProvider";
+import { usePageFormat } from "@/hooks/usePageFormat";
 
 export function MjmlDomRender() {
    const { pageData: content } = useEditorContext();
    const [pageData, setPageData] = useState<IPage | null>(null);
    const [ref, setRef] = useState<HTMLDivElement | null>(null);
-   const { dashed, selectedFormat: dimension } = useContext(EditorPropsContext);
+   const { dashed } = useContext(EditorPropsContext);
+   const { pageDimesions: dimension } = usePageFormat();
    const pageMaxWidth = content.attributes.width || "600px";
 
    useEffect(() => {
@@ -46,7 +48,7 @@ export function MjmlDomRender() {
             style={{
                width: dimension.width,
                padding: "40px 0px",
-               margin: "auto",
+               margin: "0 20px",
                outline: "none",
                position: "relative",
             }}

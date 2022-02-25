@@ -13,21 +13,14 @@ import { AttributesPanel } from "@/components/EmailEditor/components/Configurati
 import { getIndexByIdx, getParentIdx, getValueByIdx } from "@/utils/block";
 
 import { useFocusIdx } from "@/hooks/useFocusIdx";
-import { useBlock } from "@/hooks/useBlock";
 import { BasicType, BlockType, FIXED_CONTAINER_ID } from "@/constants";
 import { IBlockData, IEmailTemplate } from "@/typings";
-import { cloneDeep, debounce, get } from "lodash";
+import { cloneDeep, get } from "lodash";
 import { message, Row, Col } from "antd";
 import { useEditorContext } from "@/hooks/useEditorContext";
-import { BlocksMap } from "@/components/core/blocks";
 import { createBlockItem } from "@/utils/createBlockItem";
-import { EditorPropsContext } from "@/components/Provider/PropsProvider";
-import { Button, Tooltip } from "antd";
-import { IconFont } from "@/components/IconFont";
-import { MergeTags } from "@/components/EmailEditor/components/ConfigurationPanel/components/AttributesManager/components/MergeTags";
-import { PlusCircleOutlined, MinusCircleOutlined } from "@ant-design/icons";
 
-const getPopoverMountNode = () => document.getElementById(FIXED_CONTAINER_ID)!;
+import { PlusCircleOutlined, MinusCircleOutlined } from "@ant-design/icons";
 
 export function Panel() {
    const { values, getState, change, batch } = useEditorContext();
